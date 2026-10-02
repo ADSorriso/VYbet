@@ -14,7 +14,7 @@ create trigger on_auth_user_created after insert on auth.users for each row exec
 
 create table if not exists public.competitions(id uuid primary key default gen_random_uuid(),name text not null,slug text unique not null,country text);
 create table if not exists public.teams(id uuid primary key default gen_random_uuid(),name text not null,short_name text,logo_url text,country text);
-create table if not exists public.matches(id uuid primary key default gen_random_uuid(),competition_id uuid references public.competitions(id),home_team_id uuid references public.teams(id),away_team_id uuid references public.teams(id),start_time timestamptz not null,status text not null default 'scheduled',home_score int,away_score int,constraint matches_home_team_id_fkey foreign key(home_team_id) references public.teams(id),constraint matches_away_team_id_fkey foreign key(away_team_id) references public.teams(id));
+create table if not exists public.matches(id uuid primary key default gen_random_uuid(),competition_id uuid references public.competitions(id),home_team_id uuid references public.teams(id),away_team_id uuid references public.teams(id),start_time timestamptz not null,status text not null default 'scheduled',home_score int,away_score int);
 create table if not exists public.markets(id uuid primary key default gen_random_uuid(),match_id uuid not null references public.matches(id) on delete cascade,name text not null,market_key text not null);
 create table if not exists public.odds(id uuid primary key default gen_random_uuid(),market_id uuid not null references public.markets(id) on delete cascade,selection_key text not null,label text not null,value numeric(8,2) not null check(value>=1),active boolean not null default true);
 create table if not exists public.demo_bets(id uuid primary key default gen_random_uuid(),user_id uuid not null references auth.users(id) on delete cascade,stake numeric(12,2) not null check(stake>0),total_odd numeric(12,2) not null,potential_return numeric(12,2) not null,status text not null default 'open',created_at timestamptz not null default now());
@@ -26,8 +26,13 @@ create table if not exists public.promotions(id uuid primary key default gen_ran
 alter table public.profiles enable row level security;
 alter table public.demo_bets enable row level security;
 alter table public.demo_bet_selections enable row level security;
+drop policy if exists "profile own read" on public.profiles;
 create policy "profile own read" on public.profiles for select using(auth.uid()=id);
+drop policy if exists "profile own update" on public.profiles;
 create policy "profile own update" on public.profiles for update using(auth.uid()=id);
+drop policy if exists "bets own read" on public.demo_bets;
 create policy "bets own read" on public.demo_bets for select using(auth.uid()=user_id);
+drop policy if exists "bets own insert" on public.demo_bets;
 create policy "bets own insert" on public.demo_bets for insert with check(auth.uid()=user_id);
+drop policy if exists "selections through own bet read" on public.demo_bet_selections;
 create policy "selections through own bet read" on public.demo_bet_selections for select using(exists(select 1 from public.demo_bets b where b.id=bet_id and b.user_id=auth.uid()));

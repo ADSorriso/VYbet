@@ -224,6 +224,85 @@ const demoBets = [
   {date:'29/09/2026 18:05', event:'Flamengo x Palmeiras', selection:'Mais de 2.5', odd:'1.80', status:'Encerrada'}
 ];
 
+const API_BASE = (window.VYBET_API_URL || 'http://localhost:3000').replace(/\/$/, '');
+const AUTH_KEY = 'vybet_auth_session';
+let authSession = (() => { try { return JSON.parse(localStorage.getItem(AUTH_KEY) || 'null'); } catch { return null; } })();
+let authProfile = null;
+
+function saveSession(session, user){
+  authSession = session ? { ...session, user: user || session.user } : null;
+  if(authSession) localStorage.setItem(AUTH_KEY, JSON.stringify(authSession));
+  else localStorage.removeItem(AUTH_KEY);
+  updateAuthHeader();
+}
+function currentUser(){ return authSession?.user || null; }
+function accessToken(){ return authSession?.access_token || ''; }
+function escapeHtml(value=''){ return String(value).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+async function apiRequest(path, options={}){
+  const headers = {'Content-Type':'application/json', ...(options.headers||{})};
+  if(accessToken()) headers.Authorization = `Bearer ${accessToken()}`;
+  const response = await fetch(`${API_BASE}${path}`, {...options, headers});
+  let data={}; try { data=await response.json(); } catch { data={ok:false,error:'Resposta inválida do servidor.'}; }
+  if(!response.ok || data.ok===false) throw new Error(data.error || `Erro ${response.status}`);
+  return data;
+}
+function updateAuthHeader(){
+  const top=document.querySelector('.top-actions'); if(!top)return;
+  top.querySelectorAll('.auth-runtime').forEach(x=>x.remove());
+  const loginBtn=top.querySelector('.login'); const signupBtn=top.querySelector('.deposit');
+  const user=currentUser();
+  if(!user){ if(loginBtn) loginBtn.style.display=''; if(signupBtn) signupBtn.style.display=''; return; }
+  if(loginBtn) loginBtn.style.display='none'; if(signupBtn) signupBtn.style.display='none';
+  const wrap=document.createElement('div'); wrap.className='auth-runtime';
+  const name=user.user_metadata?.name || user.email?.split('@')[0] || 'Conta';
+  wrap.innerHTML=`<button class="account-chip" type="button"><span class="account-dot"></span>${escapeHtml(name)}</button><button class="logout-btn" type="button">Sair</button>`;
+  wrap.querySelector('.account-chip').onclick=()=>openPage('profile');
+  wrap.querySelector('.logout-btn').onclick=logoutUser;
+  top.appendChild(wrap);
+}
+async function logoutUser(){
+  try { if(accessToken()) await apiRequest('/api/auth/logout',{method:'POST',body:'{}'}); } catch {}
+  saveSession(null); authProfile=null; showToast('Sessão encerrada.'); closePage();
+}
+async function loadProfilePage(){
+  if(!currentUser()){ openPage('login'); return; }
+  pageContent.innerHTML='<div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>Carregando seus dados...</p></div>';
+  try{
+    const data=await apiRequest('/api/profile'); authProfile=data.profile;
+    const name=data.profile?.name || currentUser()?.user_metadata?.name || 'Usuário VYBET';
+    const email=data.email || currentUser()?.email || '';
+    const balance=Number(data.profile?.demo_balance || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    const vip=(data.profile?.vip_level || 'bronze');
+    pageContent.innerHTML=`<div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>Dados reais da sua conta VYBET.</p></div>
+      <div class="profile-grid"><div class="profile-card profile-main"><div class="avatar">${escapeHtml(name.charAt(0).toUpperCase())}</div><div><b>${escapeHtml(name)}</b><span>${escapeHtml(email)}</span></div><button class="outline" id="profile-logout">Sair</button></div><div class="profile-card"><small>Saldo de demonstração</small><strong>${balance}</strong><span>Somente para testes do protótipo.</span></div><div class="profile-card"><small>Nível</small><strong>VIP ${escapeHtml(vip.charAt(0).toUpperCase()+vip.slice(1))}</strong><span>Conta autenticada no Supabase</span></div></div>
+      <div class="settings-list"><button><span>🔒 Segurança</span><b>›</b></button><button><span>🔔 Notificações</span><b>›</b></button><button><span>🎯 Limites e preferências</span><b>›</b></button></div>`;
+    pageContent.querySelector('#profile-logout')?.addEventListener('click',logoutUser);
+  }catch(err){
+    if(/Sessão inválida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); return; }
+    pageContent.innerHTML=`<div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>${escapeHtml(err.message)}</p></div>`;
+  }
+}
+async function handleAccountForm(form){
+  const submit=form.querySelector('[type="submit"]'); const original=submit?.textContent;
+  if(submit){submit.disabled=true;submit.textContent='Aguarde...';}
+  try{
+    if(form.dataset.form==='signup'){
+      const inputs=form.querySelectorAll('input');
+      const payload={name:inputs[0].value.trim(),birth_date:inputs[1].value,email:inputs[2].value.trim(),password:inputs[3].value};
+      const data=await apiRequest('/api/auth/signup',{method:'POST',body:JSON.stringify(payload)});
+      if(data.session){ saveSession(data.session,data.user); showToast('Conta criada e sessão iniciada.'); closePage(); }
+      else { showToast('Conta criada. Verifique seu e-mail para entrar.'); openPage('login'); }
+    } else if(form.dataset.form==='login'){
+      const inputs=form.querySelectorAll('input');
+      const data=await apiRequest('/api/auth/login',{method:'POST',body:JSON.stringify({email:inputs[0].value.trim(),password:inputs[1].value})});
+      saveSession(data.session,data.user); showToast('Login realizado com sucesso.'); closePage();
+    } else if(form.dataset.form==='recovery'){
+      showToast('Recuperação de senha ainda não conectada ao backend.');
+    }
+  }catch(err){ showToast(err.message || 'Não foi possível concluir a operação.'); }
+  finally{ if(submit){submit.disabled=false;submit.textContent=original;} }
+}
+
 function openPage(page){
   const pages = {
     login: `
@@ -249,9 +328,7 @@ function openPage(page){
       <div class="account-head"><span>RECUPERAÇÃO</span><h1>Recuperar acesso</h1><p>Informe seu e-mail para simular o envio de recuperação.</p></div>
       <form class="account-form" data-form="recovery"><label>E-mail<input type="email" required placeholder="voce@email.com"></label><button class="primary-action" type="submit">Enviar link</button></form>`,
     profile: `
-      <div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>Dados e preferências da conta de demonstração.</p></div>
-      <div class="profile-grid"><div class="profile-card profile-main"><div class="avatar">V</div><div><b>Visitante VYBET</b><span>conta.demo@vybet.com</span></div><button class="outline" data-page="login">Trocar conta</button></div><div class="profile-card"><small>Saldo de demonstração</small><strong>R$ 1.000,00</strong><span>Somente para testes do protótipo.</span></div><div class="profile-card"><small>Nível</small><strong>VIP Bronze</strong><span>0 pontos acumulados</span></div></div>
-      <div class="settings-list"><button><span>🔒 Segurança</span><b>›</b></button><button><span>🔔 Notificações</span><b>›</b></button><button><span>🎯 Limites e preferências</span><b>›</b></button></div>`,
+      <div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>Carregando seus dados...</p></div>`,
     bets: `
       <div class="account-head"><span>HISTÓRICO</span><h1>Minhas apostas</h1><p>Acompanhe as apostas simuladas deste protótipo.</p></div>
       <div class="bet-history-tabs"><button class="active">Todas</button><button>Abertas</button><button>Encerradas</button></div>
@@ -288,7 +365,8 @@ function openPage(page){
   document.body.classList.add('modal-open');
   pageContent.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click', e=>{e.preventDefault();openPage(el.dataset.page)}));
   const form=pageContent.querySelector('form');
-  if(form) form.addEventListener('submit', e=>{e.preventDefault();showToast(form.dataset.form==='signup'?'Conta criada no protótipo.':'Operação simulada com sucesso.'); if(form.dataset.form==='login') openPage('profile');});
+  if(form) form.addEventListener('submit', e=>{e.preventDefault();handleAccountForm(form);});
+  if(page==='profile') loadProfilePage();
 }
 function closePage(){pageOverlay.classList.remove('open');pageOverlay.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open');}
 pageClose?.addEventListener('click',closePage);
@@ -402,8 +480,7 @@ placeBetBtn.onclick=()=>{
 document.querySelectorAll('.competition[data-league]').forEach(card=>card.addEventListener('click',()=>{pageContent.innerHTML=leaguePage(card.dataset.league);pageOverlay.classList.add('open');pageOverlay.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');}));
 document.querySelectorAll('[data-page="live-all"],[data-page="casino"],[data-page="casino-live"]').forEach(el=>el.onclick=e=>{e.preventDefault();openPage(el.dataset.page)});
 
-// Login/cadastro locais apenas para tornar o frontend navegável (sem autenticação de servidor).
-document.addEventListener('submit',e=>{
-  const f=e.target;if(!f.matches('.account-form'))return;
-  if(f.dataset.form==='signup') localStorage.setItem('vybet_demo_user',JSON.stringify({created:true}));
-},true);
+// Autenticação real integrada ao backend VYBET/Supabase.
+
+// Inicializa o estado visual da autenticação ao carregar a página.
+updateAuthHeader();
