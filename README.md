@@ -48,3 +48,5 @@ Para uma plataforma real seriam necessárias, entre outras coisas, arquitetura d
 - Textos e odds do conteúdo ficam em branco para maior contraste.
 
 - Ícones das categorias esportivas corrigidos para branco em estado normal e verde no estado ativo/hover, com contraste reforçado.
+
+- Barra superior atualizada: removidos presente e sino; adicionada coroa VIP dourada e botões Entrar/Criar conta conforme a referência.

@@ -246,3 +246,51 @@ button,input{font:inherit}.app-shell{min-height:100vh}.topbar{height:74px;border
 .sport-tabs button:hover span{
   color:#FFFFFF !important;
 }
+
+/* ===== Topbar VIP: same visual language as the generated reference ===== */
+.vip-badge{
+  height:40px;
+  min-width:72px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  color:#F4C542;
+  font-weight:700;
+  font-size:13px;
+}
+.vip-badge img{
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  min-height:22px !important;
+  max-width:22px !important;
+  max-height:22px !important;
+  display:block;
+  object-fit:contain;
+  filter:none !important;
+}
+.login{
+  height:46px;
+  min-width:120px;
+  padding:0 20px;
+  border:1px solid #1e2a30;
+  border-radius:9px;
+  background:#0d1418;
+  color:#F4F7F7;
+  font-weight:600;
+  cursor:pointer;
+}
+.login:hover{
+  border-color:#2c3a40;
+  background:#111a1f;
+}
+.top-actions .deposit{
+  height:46px;
+  min-width:123px;
+  font-size:14px;
+}
+@media(max-width:850px){
+  .vip-badge{display:none}
+  .login{display:none}
+}
