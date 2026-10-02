@@ -294,3 +294,8 @@ button,input{font:inherit}.app-shell{min-height:100vh}.topbar{height:74px;border
   .vip-badge{display:none}
   .login{display:none}
 }
+
+
+/* Team logos */
+.team-line{display:flex;align-items:center;gap:9px;min-height:27px;font-weight:700;color:#f4f7f7}.team-logo{width:24px;height:24px;object-fit:contain;flex:0 0 24px}.live-team>span{display:flex;align-items:center;gap:7px}.team-logo.mini{width:19px;height:19px;flex-basis:19px}.teams .league{margin-bottom:4px}
+@media (max-width: 850px){.team-line{font-size:12px}.team-logo{width:22px;height:22px;flex-basis:22px}}

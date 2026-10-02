@@ -50,3 +50,7 @@ Para uma plataforma real seriam necessárias, entre outras coisas, arquitetura d
 - Ícones das categorias esportivas corrigidos para branco em estado normal e verde no estado ativo/hover, com contraste reforçado.
 
 - Barra superior atualizada: removidos presente e sino; adicionada coroa VIP dourada e botões Entrar/Criar conta conforme a referência.
+
+
+## Sistema de equipes e escudos
+A interface agora usa um catálogo local de equipes para as partidas do protótipo. Cada time possui um identificador visual e um caminho de logo separado do HTML. Na próxima etapa, o catálogo pode ser substituído por dados de uma API esportiva, mantendo o mesmo componente visual.

@@ -4,6 +4,27 @@ const sports = [
   ["more","Mais Esportes",""]
 ];
 
+const teamLogos = {
+  "Manchester City": "assets/teams/football/manchester-city.svg",
+  "Arsenal": "assets/teams/football/arsenal.svg",
+  "Real Madrid": "assets/teams/football/real-madrid.svg",
+  "Barcelona": "assets/teams/football/barcelona.svg",
+  "Flamengo": "assets/teams/football/flamengo.svg",
+  "Palmeiras": "assets/teams/football/palmeiras.svg",
+  "River Plate": "assets/teams/football/river-plate.svg",
+  "Boca Juniors": "assets/teams/football/boca-juniors.svg",
+  "Liverpool": "assets/teams/football/liverpool.svg",
+  "Newcastle": "assets/teams/football/newcastle.svg",
+  "Juventus": "assets/teams/football/juventus.svg",
+  "Inter de Milão": "assets/teams/football/inter-milao.svg",
+  "Atlético-MG": "assets/teams/football/atletico-mg.svg",
+  "Corinthians": "assets/teams/football/corinthians.svg",
+  "Los Angeles Lakers": "assets/teams/basketball/los-angeles-lakers.svg",
+  "Boston Celtics": "assets/teams/basketball/boston-celtics.svg",
+  "NAVI": "assets/teams/esports/navi.svg",
+  "FURIA": "assets/teams/esports/furia.svg"
+};
+
 const matches = [
   ["Hoje","16:00","Premier League","Manchester City","Arsenal","1.85","3.60","4.20","+320"],
   ["Hoje","18:30","La Liga","Real Madrid","Barcelona","2.10","3.50","3.10","+412"],
@@ -33,7 +54,11 @@ matches.forEach((m,i)=>{
   el.className="match";
   el.innerHTML=`
     <div class="time">${m[0]}<br><b>${m[1]}</b></div>
-    <div class="teams"><div class="league">${m[2]}</div><div>${m[3]}</div><div>${m[4]}</div></div>
+    <div class="teams">
+      <div class="league">${m[2]}</div>
+      <div class="team-line"><img class="team-logo" src="${teamLogos[m[3]]}" alt="${m[3]}"><span>${m[3]}</span></div>
+      <div class="team-line"><img class="team-logo" src="${teamLogos[m[4]]}" alt="${m[4]}"><span>${m[4]}</span></div>
+    </div>
     <div class="trend">▥<br><span>${m[8]}</span></div>
     <button class="odds" data-team="${m[3]}"><span class="odd-label">1</span>${m[5]}</button>
     <button class="odds" data-team="${m[3]}"><span class="odd-label">X</span>${m[6]}</button>
@@ -47,8 +72,8 @@ live.forEach(m=>{
   const el=document.createElement("div"); el.className="live-game";
   el.innerHTML=`
     <div class="live-meta"><span>${m[0]}</span><span>▥ ${m[8]}</span></div>
-    <div class="live-team"><span>${m[1]}</span><b class="live-score">${m[3]}</b></div>
-    <div class="live-team"><span>${m[2]}</span><b class="live-score">${m[4]}</b></div>
+    <div class="live-team"><span><img class="team-logo mini" src="${teamLogos[m[1]]||''}" alt="">${m[1]}</span><b class="live-score">${m[3]}</b></div>
+    <div class="live-team"><span><img class="team-logo mini" src="${teamLogos[m[2]]||''}" alt="">${m[2]}</span><b class="live-score">${m[4]}</b></div>
     <div class="mini-odds"><span>${m[5]}</span><span>${m[6]}</span><span>${m[7]||"—"}</span></div>`;
   liveBox.appendChild(el);
 });
