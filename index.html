@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VYBET — Protótipo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="#"><span>VY</span>BET</a>
+    <nav class="topnav">
+      <a class="active" href="#esportes">⚽ Esportes</a>
+      <a href="#live">◉ Ao Vivo</a>
+      <a href="#casino">♠ Cassino</a>
+      <a href="#casino">✦ Cassino Ao Vivo</a>
+      <a href="#promocoes">🎁 Promoções</a>
+      <a href="#resultados">▣ Resultados</a>
+    </nav>
+    <div class="search"><span>⌕</span><input placeholder="Buscar jogos, times, campeonatos..."></div>
+    <div class="top-actions">
+      <button class="icon-btn">🎁</button><button class="icon-btn">🔔<i></i></button>
+      <div class="balance"><small>Saldo</small><strong>R$ 1.250,00</strong></div>
+      <button class="deposit">Depositar</button>
+      <div class="profile"><div class="avatar">R</div><div><b>Ricael</b><small>VIP Bronze</small></div></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-title">PRINCIPAL</div>
+      <a class="side-link active" href="#"><span>⌂</span> Início</a>
+      <a class="side-link" href="#live"><span>◷</span> Ao Vivo <em>32</em></a>
+      <a class="side-link" href="#esportes"><span>▣</span> Próximos Jogos</a>
+      <a class="side-link" href="#resultados"><span>⊕</span> Resultados</a>
+      <a class="side-link" href="#promocoes"><span>☆</span> Promoções</a>
+      <a class="side-link" href="#apostas"><span>▤</span> Minhas Apostas</a>
+
+      <div class="side-title sports-title">ESPORTES</div>
+      <div id="sports-list"></div>
+
+      <div class="welcome-bonus" id="promocoes">
+        <span>BÔNUS DE BOAS-VINDAS</span>
+        <strong>100%</strong>
+        <small>ATÉ R$ 500</small>
+        <button>Saiba mais</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="hero-kicker">VYBET SPORTS</div>
+          <h1>SUA PAIXÃO<br><span>VALE MAIS</span></h1>
+          <p>APOSTE NOS SEUS ESPORTES FAVORITOS<br>COM AS MELHORES ODDS DO MERCADO.</p>
+          <button class="primary">Aposte agora <span>→</span></button>
+        </div>
+        <div class="hero-player">10</div>
+        <div class="hero-points">
+          <div>✓ <b>ODDS COMPETITIVAS</b></div>
+          <div>♧ <b>PAGAMENTOS RÁPIDOS</b></div>
+          <div>◌ <b>SUPORTE 24/7</b></div>
+          <div>♙ <b>AMBIENTE SEGURO</b></div>
+        </div>
+        <div class="hero-dots"><i class="active"></i><i></i><i></i></div>
+      </section>
+
+      <section class="sport-tabs" id="esportes">
+        <button class="selected">⚽<span>Futebol</span></button>
+        <button>◉<span>Basquete</span></button>
+        <button>◯<span>Tênis</span></button>
+        <button>◈<span>Vôlei</span></button>
+        <button>⚒<span>MMA</span></button>
+        <button>🎮<span>eSports</span></button>
+        <button>F1<span>F1</span></button>
+        <button>•••<span>Mais</span></button>
+      </section>
+
+      <div class="main-grid">
+        <section>
+          <div class="section-head">
+            <h2><i></i> Jogos em Destaque</h2>
+            <div class="filters"><button class="on">Todos</button><button>Futebol</button><button>Basquete</button><button>Tênis</button><button>Vôlei</button><button>Mais</button></div>
+          </div>
+          <div class="match-table" id="matches"></div>
+
+          <div class="section-head competitions-head">
+            <h2><i></i> Principais Competições</h2>
+            <a href="#">Ver todas →</a>
+          </div>
+          <div class="competitions">
+            <div class="competition"><div class="comp-art premier">PL</div><b>Premier League</b><small>Inglaterra</small></div>
+            <div class="competition"><div class="comp-art laliga">LL</div><b>La Liga</b><small>Espanha</small></div>
+            <div class="competition"><div class="comp-art seriea">A</div><b>Série A</b><small>Brasil</small></div>
+            <div class="competition"><div class="comp-art champions">UCL</div><b>Champions League</b><small>Europa</small></div>
+            <div class="competition"><div class="comp-art libertadores">LIB</div><b>Libertadores</b><small>América do Sul</small></div>
+          </div>
+        </section>
+
+        <section class="live-panel" id="live">
+          <div class="live-head"><h2><span class="live-dot"></span> Ao Vivo</h2><a href="#">Ver todos →</a></div>
+          <div class="live-tabs"><button class="on">Futebol <b>12</b></button><button>Tênis <b>8</b></button><button>Basquete <b>4</b></button></div>
+          <div id="live-games"></div>
+        </section>
+      </div>
+
+      <section class="results-placeholder" id="resultados">
+        <div><span>RESULTADOS</span><h2>Resultados e histórico</h2><p>Área preparada para consultar partidas encerradas e resultados.</p></div>
+        <button class="outline">Ver resultados</button>
+      </section>
+    </main>
+
+    <aside class="rightbar" id="apostas">
+      <div class="bet-header"><button class="active">Cupom <b id="bet-count">3</b></button><button>Minhas Apostas</button></div>
+      <div class="bet-types"><button class="active">Simples</button><button>Múltipla</button><button>Sistema</button></div>
+      <div id="bet-slip"></div>
+      <div class="bet-summary">
+        <div class="row"><span>Multiplicador de odds</span><b class="green">+5%</b><label class="toggle"><input type="checkbox" checked><i></i></label></div>
+        <div class="row"><span>Cota total</span><strong id="total-odds">6.98</strong></div>
+        <label class="stake">Valor da aposta<input id="stake" type="number" min="0" value="50"></label>
+        <div class="return"><span>Possível retorno</span><strong id="return">R$ 349,00</strong></div>
+        <button class="bet-button" id="place-bet">Fazer aposta</button>
+      </div>
+      <div class="side-promo"><strong>CASHBACK<br><span>SEMANAL</span></strong><p>Receba parte das suas perdas de volta.</p><button>Saiba mais</button></div>
+      <div class="casino-mini" id="casino">
+        <div class="casino-title"><b>Cassino</b><a href="#">Ver todos →</a></div>
+        <p>Slots, roleta, blackjack e muito mais.</p>
+        <div class="casino-games"><span>7<br><small>Slots</small></span><span>◉<br><small>Roleta</small></span><span>♠<br><small>Blackjack</small></span><span>🚀<br><small>Crash</small></span></div>
+      </div>
+    </aside>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="js/app.js"></script>
+</body>
+</html>
