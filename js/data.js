@@ -1,14 +1,6 @@
 window.VYBET_DATA = {
   sports: [
-    { id: 'football', name: 'Futebol', count: '1.245' },
-    { id: 'basketball', name: 'Basquete', count: '342' },
-    { id: 'tennis', name: 'Tênis', count: '287' },
-    { id: 'volleyball', name: 'Vôlei', count: '156' },
-    { id: 'mma', name: 'MMA', count: '94' },
-    { id: 'esports', name: 'eSports', count: '210' },
-    { id: 'f1', name: 'F1', count: '76' },
-    { id: 'table-tennis', name: 'Tênis de Mesa', count: '52' },
-    { id: 'more', name: 'Mais Esportes', count: '' }
+    { id: 'football', name: 'Futebol', count: '1.245' }
   ],
   teams: {
     'Manchester City': { id:'mci', sport:'football', league:'Premier League', logo:'assets/teams/football/manchester-city.svg' },
@@ -24,11 +16,7 @@ window.VYBET_DATA = {
     'Juventus': { id:'juv', sport:'football', league:'Serie A', logo:'assets/teams/football/juventus.svg' },
     'Inter de Milão': { id:'int', sport:'football', league:'Serie A', logo:'assets/teams/football/inter-milao.svg' },
     'Atlético-MG': { id:'cam', sport:'football', league:'Série A', logo:'assets/teams/football/atletico-mg.svg' },
-    'Corinthians': { id:'cor', sport:'football', league:'Série A', logo:'assets/teams/football/corinthians.svg' },
-    'Los Angeles Lakers': { id:'lal', sport:'basketball', league:'NBA', logo:'assets/teams/basketball/los-angeles-lakers.svg' },
-    'Boston Celtics': { id:'bos', sport:'basketball', league:'NBA', logo:'assets/teams/basketball/boston-celtics.svg' },
-    'NAVI': { id:'navi', sport:'esports', league:'Counter-Strike', logo:'assets/teams/esports/navi.svg' },
-    'FURIA': { id:'furia', sport:'esports', league:'Counter-Strike', logo:'assets/teams/esports/furia.svg' }
+    'Corinthians': { id:'cor', sport:'football', league:'Série A', logo:'assets/teams/football/corinthians.svg' }
   },
   matches: [
     {id:'mci-ars', sport:'football', day:'Hoje', time:'16:00', league:'Premier League', home:'Manchester City', away:'Arsenal', odds:{home:'1.85',draw:'3.60',away:'4.20'}, extra:'+320'},
@@ -39,8 +27,6 @@ window.VYBET_DATA = {
   live: [
     {id:'liv-new', sport:'football', clock:"45'", home:'Liverpool', away:'Newcastle', scoreHome:'1', scoreAway:'0', odds:['1.40','4.20','7.50'], extra:'+120'},
     {id:'juv-int', sport:'football', clock:"67'", home:'Juventus', away:'Inter de Milão', scoreHome:'1', scoreAway:'1', odds:['2.80','2.10','3.20'], extra:'+98'},
-    {id:'lal-bos', sport:'basketball', clock:"32'", home:'Los Angeles Lakers', away:'Boston Celtics', scoreHome:'48', scoreAway:'52', odds:['2.05','-','1.75'], extra:'+45'},
-    {id:'cam-cor', sport:'football', clock:'2º T', home:'Atlético-MG', away:'Corinthians', scoreHome:'1', scoreAway:'1', odds:['2.30','3.10','3.00'], extra:'+76'},
-    {id:'navi-furia', sport:'esports', clock:"15'", home:'NAVI', away:'FURIA', scoreHome:'1', scoreAway:'0', odds:['1.65','2.10',''], extra:'+34'}
+    {id:'cam-cor', sport:'football', clock:'2º T', home:'Atlético-MG', away:'Corinthians', scoreHome:'1', scoreAway:'1', odds:['2.30','3.10','3.00'], extra:'+76'}
   ]
 };

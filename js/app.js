@@ -168,7 +168,7 @@ document.querySelectorAll('.filters button').forEach(btn => {
     document.querySelectorAll('.filters button').forEach(x => x.classList.remove('on'));
     btn.classList.add('on');
     const filter = btn.textContent.trim();
-    const sport = filter === 'Todos' ? null : ({'Futebol':'football','Basquete':'basketball','Tênis':'tennis','Vôlei':'volleyball','Mais':null}[filter]);
+    const sport = filter === 'Todos' ? null : ({'Futebol':'football'}[filter]);
     renderMatches(sport ? matches.filter(m => m.sport === sport) : matches);
   });
 });

@@ -51,22 +51,16 @@
     <main class="content">
       <section class="hero" aria-label="VYBET Sports"></section>
 
-      <section class="sport-tabs" id="esportes">
+      <section class="sport-tabs sport-tabs-focus" id="esportes">
         <button class="selected"><img src="assets/icons/football.svg" alt=""><span>Futebol</span></button>
-        <button><img src="assets/icons/basketball.svg" alt=""><span>Basquete</span></button>
-        <button><img src="assets/icons/tennis.svg" alt=""><span>Tênis</span></button>
-        <button><img src="assets/icons/volleyball.svg" alt=""><span>Vôlei</span></button>
-        <button><img src="assets/icons/mma.svg" alt=""><span>MMA</span></button>
-        <button><img src="assets/icons/esports.svg" alt=""><span>eSports</span></button>
-        <button><img src="assets/icons/f1.svg" alt=""><span>F1</span></button>
-        <button><img src="assets/icons/more.svg" alt=""><span>Mais</span></button>
+        <button onclick="document.getElementById('casino').scrollIntoView({behavior:'smooth'})"><img src="assets/icons/casino.svg" alt=""><span>Cassino</span></button>
       </section>
 
       <div class="main-grid">
         <section>
           <div class="section-head">
             <h2><i></i> Jogos em Destaque</h2>
-            <div class="filters"><button class="on">Todos</button><button>Futebol</button><button>Basquete</button><button>Tênis</button><button>Vôlei</button><button>Mais</button></div>
+            <div class="filters"><button class="on">Todos</button><button>Futebol</button></div>
           </div>
           <div class="match-table" id="matches"></div>
 
@@ -85,7 +79,7 @@
 
         <section class="live-panel" id="live">
           <div class="live-head"><h2><span class="live-dot"></span> Ao Vivo</h2><a href="#">Ver todos →</a></div>
-          <div class="live-tabs"><button class="on">Futebol <b>12</b></button><button>Tênis <b>8</b></button><button>Basquete <b>4</b></button></div>
+          <div class="live-tabs"><button class="on">Futebol <b>12</b></button></div>
           <div id="live-games"></div>
         </section>
       </div>
