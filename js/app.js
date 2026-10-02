@@ -211,3 +211,63 @@ function showToast(msg){
 renderMatches();
 renderLive();
 renderSlip();
+
+
+// ===== Contas e páginas do frontend (protótipo) =====
+const pageOverlay = document.getElementById('page-overlay');
+const pageContent = document.getElementById('page-content');
+const pageClose = document.getElementById('page-close');
+
+const demoBets = [
+  {date:'02/10/2026 12:18', event:'Manchester City x Arsenal', selection:'Manchester City', odd:'1.85', status:'Aberta'},
+  {date:'01/10/2026 20:41', event:'Real Madrid x Barcelona', selection:'Real Madrid', odd:'2.10', status:'Aberta'},
+  {date:'29/09/2026 18:05', event:'Flamengo x Palmeiras', selection:'Mais de 2.5', odd:'1.80', status:'Encerrada'}
+];
+
+function openPage(page){
+  const pages = {
+    login: `
+      <div class="account-head"><span>VYBET</span><h1>Entrar na sua conta</h1><p>Acesse seu painel para acompanhar apostas e preferências.</p></div>
+      <form class="account-form" data-form="login">
+        <label>E-mail<input type="email" required placeholder="voce@email.com"></label>
+        <label>Senha<input type="password" required placeholder="••••••••"></label>
+        <div class="form-row"><label class="check"><input type="checkbox"> Lembrar de mim</label><a href="#" data-page="recovery">Esqueci minha senha</a></div>
+        <button class="primary-action" type="submit">Entrar</button>
+        <p class="account-foot">Ainda não tem conta? <a href="#" data-page="signup">Criar conta</a></p>
+      </form>`,
+    signup: `
+      <div class="account-head"><span>VYBET</span><h1>Criar sua conta</h1><p>Monte seu perfil para continuar no protótipo.</p></div>
+      <form class="account-form" data-form="signup">
+        <div class="form-grid"><label>Nome<input required placeholder="Seu nome"></label><label>Data de nascimento<input type="date" required></label></div>
+        <label>E-mail<input type="email" required placeholder="voce@email.com"></label>
+        <label>Senha<input type="password" minlength="6" required placeholder="Mínimo de 6 caracteres"></label>
+        <label class="check"><input type="checkbox" required> Li e aceito os termos do protótipo.</label>
+        <button class="primary-action" type="submit">Criar conta</button>
+        <p class="account-foot">Já possui conta? <a href="#" data-page="login">Entrar</a></p>
+      </form>`,
+    recovery: `
+      <div class="account-head"><span>RECUPERAÇÃO</span><h1>Recuperar acesso</h1><p>Informe seu e-mail para simular o envio de recuperação.</p></div>
+      <form class="account-form" data-form="recovery"><label>E-mail<input type="email" required placeholder="voce@email.com"></label><button class="primary-action" type="submit">Enviar link</button></form>`,
+    profile: `
+      <div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>Dados e preferências da conta de demonstração.</p></div>
+      <div class="profile-grid"><div class="profile-card profile-main"><div class="avatar">V</div><div><b>Visitante VYBET</b><span>conta.demo@vybet.com</span></div><button class="outline" data-page="login">Trocar conta</button></div><div class="profile-card"><small>Saldo de demonstração</small><strong>R$ 1.000,00</strong><span>Somente para testes do protótipo.</span></div><div class="profile-card"><small>Nível</small><strong>VIP Bronze</strong><span>0 pontos acumulados</span></div></div>
+      <div class="settings-list"><button><span>🔒 Segurança</span><b>›</b></button><button><span>🔔 Notificações</span><b>›</b></button><button><span>🎯 Limites e preferências</span><b>›</b></button></div>`,
+    bets: `
+      <div class="account-head"><span>HISTÓRICO</span><h1>Minhas apostas</h1><p>Acompanhe as apostas simuladas deste protótipo.</p></div>
+      <div class="bet-history-tabs"><button class="active">Todas</button><button>Abertas</button><button>Encerradas</button></div>
+      <div class="history-list">${demoBets.map(b=>`<div class="history-item"><div><small>${b.date}</small><b>${b.selection}</b><span>${b.event}</span></div><div class="history-meta"><strong>${b.odd}</strong><em class="${b.status==='Aberta'?'open':''}">${b.status}</em></div></div>`).join('')}</div>
+      <div class="history-summary"><span>Total de apostas <b>3</b></span><span>Retorno simulado <b>R$ 428,70</b></span></div>`,
+  };
+  pageContent.innerHTML = pages[page] || pages.profile;
+  pageOverlay.classList.add('open');
+  pageOverlay.setAttribute('aria-hidden','false');
+  document.body.classList.add('modal-open');
+  pageContent.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click', e=>{e.preventDefault();openPage(el.dataset.page)}));
+  const form=pageContent.querySelector('form');
+  if(form) form.addEventListener('submit', e=>{e.preventDefault();showToast(form.dataset.form==='signup'?'Conta criada no protótipo.':'Operação simulada com sucesso.'); if(form.dataset.form==='login') openPage('profile');});
+}
+function closePage(){pageOverlay.classList.remove('open');pageOverlay.setAttribute('aria-hidden','true');document.body.classList.remove('modal-open');}
+pageClose?.addEventListener('click',closePage);
+pageOverlay?.addEventListener('click',e=>{if(e.target===pageOverlay)closePage()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&pageOverlay?.classList.contains('open'))closePage()});
+document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();openPage(el.dataset.page)}));

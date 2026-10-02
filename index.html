@@ -27,8 +27,8 @@
         <img src="assets/icons/crown.svg" alt="">
         <span>VIP</span>
       </div>
-      <button class="login">Entrar</button>
-      <button class="deposit">Criar conta</button>
+      <button class="login" data-page="login">Entrar</button>
+      <button class="deposit" data-page="signup">Criar conta</button>
     </div>
   </header>
 
@@ -40,7 +40,7 @@
       <a class="side-link" href="#esportes"><span><img class="ui-icon" src="assets/icons/upcoming.svg" alt=""></span> Próximos Jogos</a>
       <a class="side-link" href="#resultados"><span><img class="ui-icon" src="assets/icons/results.svg" alt=""></span> Resultados</a>
       <a class="side-link" href="#promocoes"><span><img class="ui-icon" src="assets/icons/promotions.svg" alt=""></span> Promoções</a>
-      <a class="side-link" href="#apostas"><span><img class="ui-icon" src="assets/icons/bets.svg" alt=""></span> Minhas Apostas</a>
+      <a class="side-link" href="#apostas" data-page="bets"><span><img class="ui-icon" src="assets/icons/bets.svg" alt=""></span> Minhas Apostas</a>
 
       <div class="side-title sports-title">ESPORTES</div>
       <div id="sports-list"></div>
@@ -97,7 +97,7 @@
     </main>
 
     <aside class="rightbar" id="apostas">
-      <div class="bet-header"><button class="active">Cupom <b id="bet-count">3</b></button><button>Minhas Apostas</button></div>
+      <div class="bet-header"><button class="active">Cupom <b id="bet-count">3</b></button><button data-page="bets">Minhas Apostas</button></div>
       <div class="bet-types"><button class="active">Simples</button><button>Múltipla</button><button>Sistema</button></div>
       <div id="bet-slip"></div>
       <div class="bet-summary">
@@ -110,6 +110,13 @@
       <div class="side-promo" aria-label="Cashback semanal"></div>
       <div class="casino-mini" id="casino" aria-label="Cassino"></div>
     </aside>
+  </div>
+</div>
+
+<div class="page-overlay" id="page-overlay" aria-hidden="true">
+  <div class="page-panel">
+    <button class="page-close" id="page-close" aria-label="Fechar">×</button>
+    <div id="page-content"></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
