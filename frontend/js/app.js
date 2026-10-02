@@ -332,8 +332,8 @@ function openPage(page){
     bets: `
       <div class="account-head"><span>HISTÓRICO</span><h1>Minhas apostas</h1><p>Acompanhe as apostas simuladas deste protótipo.</p></div>
       <div class="bet-history-tabs"><button class="active">Todas</button><button>Abertas</button><button>Encerradas</button></div>
-      <div class="history-list">${demoBets.map(b=>`<div class="history-item"><div><small>${b.date}</small><b>${b.selection}</b><span>${b.event}</span></div><div class="history-meta"><strong>${b.odd}</strong><em class="${b.status==='Aberta'?'open':''}">${b.status}</em></div></div>`).join('')}</div>
-      <div class="history-summary"><span>Total de apostas <b>3</b></span><span>Retorno simulado <b>R$ 428,70</b></span></div>`,
+      <div class="history-list"><div class="empty-state">Carregando suas apostas...</div></div>
+      <div class="history-summary"><span>Total de apostas <b>0</b></span><span>Valor apostado <b>R$ 0,00</b></span><span>Retorno potencial <b>R$ 0,00</b></span></div>`,
     results: `
       <div class="account-head"><span>PLACARES</span><h1>Resultados</h1><p>Resultados de demonstração organizados por competição.</p></div>
       <div class="feature-tabs"><button class="active">Hoje</button><button>Ontem</button><button>Esta semana</button></div>
@@ -457,23 +457,68 @@ function enhanceResults(){
   list.innerHTML=resultCards('Hoje');
   pageContent.querySelectorAll('.feature-tabs button').forEach((btn,i)=>{btn.onclick=()=>{pageContent.querySelectorAll('.feature-tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');const labels=['Hoje','Ontem','Esta semana'];list.innerHTML=resultCards(labels[i]||'Hoje');}});
 }
-function enhanceBetHistory(){
-  const saved=JSON.parse(localStorage.getItem('vybet_demo_bets')||'[]');
-  if(!saved.length)return;
+async function enhanceBetHistory(){
   const list=pageContent.querySelector('.history-list'); if(!list)return;
-  saved.concat(demoBets).forEach(b=>{});
+  if(!currentUser()){
+    list.innerHTML='<div class="empty-state">Entre na sua conta para ver suas apostas.</div>';
+    return;
+  }
+  list.innerHTML='<div class="empty-state">Carregando suas apostas...</div>';
+  try{
+    const data=await apiRequest('/api/bets');
+    const bets=Array.isArray(data.bets)?data.bets:[];
+    if(!bets.length){
+      list.innerHTML='<div class="empty-state">Você ainda não fez nenhuma aposta de demonstração.</div>';
+    }else{
+      list.innerHTML=bets.map(b=>{
+        const sels=(b.demo_bet_selections||[]);
+        const selection=sels.map(s=>s.selection).join(' + ') || 'Aposta';
+        const market=sels.map(s=>s.market).join(' + ');
+        const status=b.status==='open'?'Aberta':(b.status==='won'?'Ganha':(b.status==='lost'?'Perdida':'Encerrada'));
+        const date=new Date(b.created_at).toLocaleString('pt-BR');
+        return `<div class="history-item"><div><small>${escapeHtml(date)}</small><b>${escapeHtml(selection)}</b><span>${escapeHtml(market)}</span><span>Valor: ${Number(b.stake).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} · Retorno potencial: ${Number(b.potential_return).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span></div><div class="history-meta"><strong>${Number(b.total_odd).toFixed(2)}</strong><em class="${b.status==='open'?'open':''}">${escapeHtml(status)}</em></div></div>`;
+      }).join('');
+    }
+    const summary=pageContent.querySelector('.history-summary');
+    if(summary){
+      const totalStake=bets.reduce((sum,b)=>sum+Number(b.stake||0),0);
+      const totalPotential=bets.reduce((sum,b)=>sum+Number(b.potential_return||0),0);
+      summary.innerHTML=`<span>Total de apostas <b>${bets.length}</b></span><span>Valor apostado <b>${totalStake.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</b></span><span>Retorno potencial <b>${totalPotential.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</b></span>`;
+    }
+  }catch(err){
+    if(/Sessão inválida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); return; }
+    list.innerHTML=`<div class="empty-state">${escapeHtml(err.message||'Não foi possível carregar suas apostas.')}</div>`;
+  }
 }
 
-// Persistir apostas de demonstração no histórico.
+// Persistir apostas de demonstração no Supabase, vinculadas ao usuário autenticado.
 const placeBetBtn=document.getElementById('place-bet');
-placeBetBtn.onclick=()=>{
+placeBetBtn.onclick=async()=>{
+  if(!currentUser()){ showToast('Entre na sua conta para fazer uma aposta de demonstração.'); openPage('login'); return; }
   if(!slip.length)return showToast('Adicione uma seleção ao cupom primeiro.');
   const stake=Number(document.getElementById('stake').value)||0;
   if(stake<=0)return showToast('Informe um valor de demonstração maior que zero.');
-  const saved=JSON.parse(localStorage.getItem('vybet_demo_bets')||'[]');
-  saved.unshift({date:new Date().toLocaleString('pt-BR'), event:slip.map(x=>x.event).join(' + '), selection:slip.map(x=>x.selection).join(' + '), odd:document.getElementById('total-odds').textContent,status:'Aberta',stake});
-  localStorage.setItem('vybet_demo_bets',JSON.stringify(saved.slice(0,20)));
-  slip=[]; renderSlip(); showToast('Aposta de demonstração salva em Minhas Apostas.');
+  placeBetBtn.disabled=true;
+  const original=placeBetBtn.textContent;
+  placeBetBtn.textContent='Salvando...';
+  try{
+    const selections=slip.map(x=>({
+      match_id:x.matchId,
+      market:x.market,
+      selection:x.selection,
+      odd:Number(x.odd)
+    }));
+    await apiRequest('/api/bets',{method:'POST',body:JSON.stringify({stake,selections})});
+    slip=[];
+    renderSlip();
+    showToast('Aposta de demonstração salva na sua conta.');
+  }catch(err){
+    if(/Sessão inválida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); }
+    showToast(err.message || 'Não foi possível salvar a aposta.');
+  }finally{
+    placeBetBtn.disabled=false;
+    placeBetBtn.textContent=original;
+  }
 };
 
 // Competições clicáveis e links completos.
