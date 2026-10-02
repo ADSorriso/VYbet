@@ -28,6 +28,7 @@ export default async function handler(req,res){
 
   const normalized=selections.map(s=>({
     match_id:UUID_RE.test(String(s.match_id||''))?s.match_id:null,
+    match_key:String(s.match_id||'').slice(0,120)||null,
     market:String(s.market||'Mercado').slice(0,120),
     selection:String(s.selection||'Seleção').slice(0,160),
     odd:Number(s.odd)
