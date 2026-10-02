@@ -80,3 +80,133 @@ button,input{font:inherit}.app-shell{min-height:100vh}.topbar{height:74px;border
 @media(max-width:850px){
   .hero{aspect-ratio:896/244;min-height:0}
 }
+
+/* ===== Final visual correction ===== */
+.topnav a,
+.side-link,
+.sport-side,
+.search{color:#F4F7F7}
+
+.topnav .ui-icon,
+.topnav .search-icon,
+.side-link .ui-icon,
+.sport-side .ui-icon,
+.sport-tabs img{
+  display:block !important;
+  width:20px !important;
+  height:20px !important;
+  min-width:20px !important;
+  min-height:20px !important;
+  max-width:20px !important;
+  max-height:20px !important;
+  flex:0 0 20px !important;
+  object-fit:contain !important;
+  object-position:center !important;
+  filter:none !important;
+  opacity:1 !important;
+}
+.topnav .ui-icon{width:15px !important;height:15px !important;min-width:15px !important;min-height:15px !important;max-width:15px !important;max-height:15px !important;flex-basis:15px !important}
+.topnav a.active .ui-icon,
+.topnav a:hover .ui-icon,
+.side-link.active .ui-icon,
+.side-link:hover .ui-icon,
+.sport-tabs button.selected img,
+.sport-tabs button:hover img{
+  filter:brightness(0) saturate(100%) invert(84%) sepia(88%) saturate(2092%) hue-rotate(65deg) brightness(104%) contrast(104%) !important;
+}
+.search .search-icon{
+  width:18px !important;height:18px !important;min-width:18px !important;max-width:18px !important;
+}
+
+.hero{
+  background-image:url("../assets/hero-reference.jpg") !important;
+  background-size:100% 100% !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  border-color:#214c34;
+}
+.welcome-bonus{
+  background-image:url("../assets/bonus-reference.jpg") !important;
+  background-size:100% 100% !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  padding:0 !important;
+  border-color:#214c34;
+  cursor:pointer;
+}
+.side-promo{
+  background-image:url("../assets/cashback-reference.jpg") !important;
+  background-size:100% 100% !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  padding:0 !important;
+  border-color:#214c34;
+  cursor:pointer;
+}
+.casino-mini{
+  background-image:url("../assets/casino-reference.jpg") !important;
+  background-size:100% 100% !important;
+  background-position:center center !important;
+  background-repeat:no-repeat !important;
+  padding:0 !important;
+  cursor:pointer;
+}
+.hero,
+.welcome-bonus,
+.side-promo,
+.casino-mini{
+  overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.28);
+}
+
+/* The artwork already includes its own typography, so don't let empty content affect layout. */
+.hero > *,
+.welcome-bonus > *,
+.side-promo > *,
+.casino-mini > *{display:none !important}
+
+/* Make all informational text readable against the dark reference UI. */
+.content,
+.content h1,.content h2,.content h3,
+.section-head,.live-head,
+.match,.match .teams,.teams div,
+.competition b,.competition small,
+.live-team,.live-score,
+.rightbar,.bet-item,.bet-summary,.bet-header button,.bet-types button{
+  color:#F4F7F7;
+}
+.league,.time,.trend,.competition small,
+.bet-item small,.row span,.stake,.return span,
+.casino-mini>p{color:#AAB5B9}
+.odds,.mini-odds span{
+  color:#F4F7F7 !important;
+  text-shadow:none;
+}
+.odds .odd-label{color:#9EAAAE !important}
+.filters button,.live-tabs button{color:#D7DEDF}
+.filters .on,.live-tabs .on{color:#2BFF5B}
+
+/* Competition art stays contained and crisp. */
+.comp-art{
+  background-size:cover;
+  background-position:center;
+  image-rendering:auto;
+}
+
+/* No accidental giant icon can escape a navigation item. */
+.topnav img,.sidebar img,.sport-tabs img{
+  overflow:hidden;
+}
+
+/* Better spacing matching the reference screenshot. */
+.topbar{gap:20px}
+.topnav{gap:4px}
+.topnav a{font-size:12px;padding:0 10px}
+.sidebar{width:auto}
+
+@media(max-width:850px){
+  .hero{aspect-ratio:896/244}
+  .welcome-bonus{aspect-ratio:223/189}
+  .side-promo{aspect-ratio:350/168}
+  .casino-mini{aspect-ratio:350/150}
+}

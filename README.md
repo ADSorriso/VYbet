@@ -37,3 +37,12 @@ Para uma plataforma real seriam necessárias, entre outras coisas, arquitetura d
 - Ícones SVG próprios no mesmo estilo monocromático da arte de referência.
 - Ícones substituem emojis na navegação, sidebar e categorias.
 - Hero, bônus, cashback e cassino agora preservam a imagem inteira sem cortes.
+
+
+## Correção final de visual
+- SVGs com traço claro/branco para leitura em fundo escuro.
+- Tamanhos dos ícones limitados por CSS para impedir ícones gigantes.
+- Ícones ativos ficam verdes.
+- Banner, bônus, cashback e cassino usam as artes de referência completas, sem cortes.
+- Artes foram ampliadas e levemente refinadas para melhorar a nitidez.
+- Textos e odds do conteúdo ficam em branco para maior contraste.

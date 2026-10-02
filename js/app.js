@@ -105,3 +105,7 @@ function showToast(msg){
   clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),2600);
 }
 recalc();
+
+document.querySelectorAll(".welcome-bonus,.side-promo,.casino-mini").forEach(card=>{
+  card.addEventListener("click",()=>showToast("Área promocional do protótipo."));
+});
