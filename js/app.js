@@ -308,3 +308,102 @@ document.querySelectorAll('.sport-tabs button').forEach(el=>el.addEventListener(
 }));
 document.querySelector('.results-placeholder .outline')?.addEventListener('click',()=>openPage('results'));
 document.querySelector('.vip-badge')?.addEventListener('click',()=>openPage('vip'));
+
+// ===== VYBET frontend funcional v2: páginas, filtros e persistência local =====
+const DEMO_RESULTS = [
+  {group:'Hoje', league:'Premier League', home:'Chelsea', away:'Tottenham', hs:2, as:1},
+  {group:'Hoje', league:'La Liga', home:'Atlético de Madrid', away:'Sevilla', hs:1, as:1},
+  {group:'Ontem', league:'Série A', home:'Flamengo', away:'Palmeiras', hs:2, as:0},
+  {group:'Ontem', league:'Copa Libertadores', home:'River Plate', away:'Boca Juniors', hs:1, as:0},
+  {group:'Esta semana', league:'Premier League', home:'Liverpool', away:'Newcastle', hs:3, as:1},
+  {group:'Esta semana', league:'La Liga', home:'Real Madrid', away:'Barcelona', hs:2, as:2}
+];
+const CASINO_GAMES = [
+  {name:'Neon Fortune', cat:'Slots', icon:'💎'}, {name:'Temple Gold', cat:'Slots', icon:'🏛️'},
+  {name:'Wild Tiger', cat:'Slots', icon:'🐯'}, {name:'Candy Spin', cat:'Slots', icon:'🍭'},
+  {name:'Roleta Neon', cat:'Mesa', icon:'🎯'}, {name:'Blackjack 21', cat:'Mesa', icon:'🂡'},
+  {name:'Baccarat Club', cat:'Mesa', icon:'🃏'}, {name:'Lightning Roulette', cat:'Ao Vivo', icon:'⚡'},
+  {name:'Live Blackjack', cat:'Ao Vivo', icon:'🎥'}, {name:'Dragon Table', cat:'Ao Vivo', icon:'🐉'}
+];
+const favCasino = new Set(JSON.parse(localStorage.getItem('vybet_casino_favs') || '[]'));
+
+function resultCards(group='Hoje'){
+  return DEMO_RESULTS.filter(r=>group==='Todos'||r.group===group).map(r=>`<article class="result-card"><small>${r.league} · ${r.group}</small><div><b>${r.home}</b><strong>${r.hs}</strong></div><div><b>${r.away}</b><strong>${r.as}</strong></div></article>`).join('') || '<div class="empty-state">Nenhum resultado nesse período.</div>';
+}
+function casinoCards(cat='Todos', query=''){
+  return CASINO_GAMES.filter(g=>(cat==='Todos'||g.cat===cat)&&g.name.toLowerCase().includes(query.toLowerCase())).map((g,i)=>`<article class="casino-game" data-game="${g.name}"><button class="casino-fav ${favCasino.has(g.name)?'on':''}" data-fav="${g.name}">${favCasino.has(g.name)?'★':'☆'}</button><div class="casino-art">${g.icon}</div><small>${g.cat}</small><b>${g.name}</b><button class="play-demo" data-game="${g.name}">Jogar demonstração</button></article>`).join('') || '<div class="empty-state">Nenhum jogo encontrado.</div>';
+}
+function casinoPage(liveOnly=false){
+  const defaultCat=liveOnly?'Ao Vivo':'Todos';
+  return `<div class="account-head"><span>CASSINO</span><h1>${liveOnly?'Cassino Ao Vivo':'Cassino VYBET'}</h1><p>Lobby demonstrativo. Os jogos abaixo são fictícios e servem para testar a navegação do frontend.</p></div>
+  <div class="casino-tools"><input id="casino-search" placeholder="Buscar jogo..."><div class="casino-cats">${['Todos','Slots','Mesa','Ao Vivo','Favoritos'].map(c=>`<button class="${c===defaultCat?'active':''}" data-cat="${c}">${c}</button>`).join('')}</div></div>
+  <div class="casino-grid" id="casino-grid">${casinoCards(defaultCat)}</div>`;
+}
+function liveAllPage(){
+  return `<div class="account-head"><span>AO VIVO</span><h1>Futebol ao vivo</h1><p>Partidas ao vivo do protótipo. As cotações e placares são demonstrativos.</p></div><div class="live-page-list">${live.map(m=>`<article><div><small>${m.clock} · Ao vivo</small><b>${team(m.home,true)} ${m.home} <strong>${m.scoreHome}</strong></b><b>${team(m.away,true)} ${m.away} <strong>${m.scoreAway}</strong></b></div><button data-live-open="${m.id}">Ver mercados</button></article>`).join('')}</div>`;
+}
+function leaguePage(league){
+  const rows=matches.filter(m=>m.league===league || (league==='Libertadores'&&m.league.includes('Libertadores')));
+  return `<div class="account-head"><span>CAMPEONATO</span><h1>${league}</h1><p>Partidas disponíveis no protótipo.</p></div><div class="sport-page-games">${rows.length?rows.map(m=>`<div><span><small>${m.day}</small><b>${m.home} × ${m.away}</b></span><strong>${m.time}</strong></div>`).join(''):'<div class="empty-state">Ainda não há partidas cadastradas para esta competição.</div>'}</div>`;
+}
+
+const oldOpenPage = openPage;
+openPage = function(page){
+  if(page==='casino' || page==='casino-live'){
+    pageContent.innerHTML=casinoPage(page==='casino-live');
+    pageOverlay.classList.add('open'); pageOverlay.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open');
+    bindDynamicPage(); return;
+  }
+  if(page==='live-all'){
+    pageContent.innerHTML=liveAllPage(); pageOverlay.classList.add('open'); pageOverlay.setAttribute('aria-hidden','false'); document.body.classList.add('modal-open'); bindDynamicPage(); return;
+  }
+  oldOpenPage(page); bindDynamicPage();
+  if(page==='results') enhanceResults();
+  if(page==='bets') enhanceBetHistory();
+};
+function bindDynamicPage(){
+  pageContent.querySelectorAll('[data-page]').forEach(el=>el.onclick=e=>{e.preventDefault();openPage(el.dataset.page)});
+  pageContent.querySelectorAll('[data-cat]').forEach(btn=>btn.onclick=()=>{
+    pageContent.querySelectorAll('[data-cat]').forEach(x=>x.classList.remove('active')); btn.classList.add('active');
+    const cat=btn.dataset.cat; document.getElementById('casino-grid').innerHTML=cat==='Favoritos'?casinoCards('Todos').replaceAll('casino-game','casino-game'):casinoCards(cat);
+    if(cat==='Favoritos') [...document.querySelectorAll('#casino-grid .casino-game')].forEach(card=>{if(!favCasino.has(card.dataset.game)) card.remove()});
+    bindDynamicPage();
+  });
+  const search=pageContent.querySelector('#casino-search'); if(search) search.oninput=()=>{const cat=pageContent.querySelector('[data-cat].active')?.dataset.cat||'Todos'; document.getElementById('casino-grid').innerHTML=casinoCards(cat==='Favoritos'?'Todos':cat,search.value); if(cat==='Favoritos') [...document.querySelectorAll('#casino-grid .casino-game')].forEach(card=>{if(!favCasino.has(card.dataset.game))card.remove()}); bindDynamicPage();};
+  pageContent.querySelectorAll('[data-fav]').forEach(btn=>btn.onclick=e=>{e.stopPropagation(); const n=btn.dataset.fav; favCasino.has(n)?favCasino.delete(n):favCasino.add(n); localStorage.setItem('vybet_casino_favs',JSON.stringify([...favCasino])); btn.classList.toggle('on');btn.textContent=favCasino.has(n)?'★':'☆';});
+  pageContent.querySelectorAll('.play-demo').forEach(btn=>btn.onclick=()=>showToast(`${btn.dataset.game}: modo demonstração aberto.`));
+  pageContent.querySelectorAll('[data-live-open]').forEach(btn=>btn.onclick=()=>showToast('Mercados ao vivo disponíveis no cupom da página inicial.'));
+}
+function enhanceResults(){
+  const list=pageContent.querySelector('.feature-list'); if(!list)return;
+  list.innerHTML=resultCards('Hoje');
+  pageContent.querySelectorAll('.feature-tabs button').forEach((btn,i)=>{btn.onclick=()=>{pageContent.querySelectorAll('.feature-tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');const labels=['Hoje','Ontem','Esta semana'];list.innerHTML=resultCards(labels[i]||'Hoje');}});
+}
+function enhanceBetHistory(){
+  const saved=JSON.parse(localStorage.getItem('vybet_demo_bets')||'[]');
+  if(!saved.length)return;
+  const list=pageContent.querySelector('.history-list'); if(!list)return;
+  saved.concat(demoBets).forEach(b=>{});
+}
+
+// Persistir apostas de demonstração no histórico.
+const placeBetBtn=document.getElementById('place-bet');
+placeBetBtn.onclick=()=>{
+  if(!slip.length)return showToast('Adicione uma seleção ao cupom primeiro.');
+  const stake=Number(document.getElementById('stake').value)||0;
+  if(stake<=0)return showToast('Informe um valor de demonstração maior que zero.');
+  const saved=JSON.parse(localStorage.getItem('vybet_demo_bets')||'[]');
+  saved.unshift({date:new Date().toLocaleString('pt-BR'), event:slip.map(x=>x.event).join(' + '), selection:slip.map(x=>x.selection).join(' + '), odd:document.getElementById('total-odds').textContent,status:'Aberta',stake});
+  localStorage.setItem('vybet_demo_bets',JSON.stringify(saved.slice(0,20)));
+  slip=[]; renderSlip(); showToast('Aposta de demonstração salva em Minhas Apostas.');
+};
+
+// Competições clicáveis e links completos.
+document.querySelectorAll('.competition[data-league]').forEach(card=>card.addEventListener('click',()=>{pageContent.innerHTML=leaguePage(card.dataset.league);pageOverlay.classList.add('open');pageOverlay.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');}));
+document.querySelectorAll('[data-page="live-all"],[data-page="casino"],[data-page="casino-live"]').forEach(el=>el.onclick=e=>{e.preventDefault();openPage(el.dataset.page)});
+
+// Login/cadastro locais apenas para tornar o frontend navegável (sem autenticação de servidor).
+document.addEventListener('submit',e=>{
+  const f=e.target;if(!f.matches('.account-form'))return;
+  if(f.dataset.form==='signup') localStorage.setItem('vybet_demo_user',JSON.stringify({created:true}));
+},true);

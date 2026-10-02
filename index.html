@@ -16,8 +16,8 @@
     <nav class="topnav">
       <a class="active" href="#esportes"><img class="ui-icon" src="assets/icons/football.svg" alt=""> Esportes</a>
       <a href="#live"><img class="ui-icon" src="assets/icons/live.svg" alt=""> Ao Vivo</a>
-      <a href="#casino"><img class="ui-icon" src="assets/icons/casino.svg" alt=""> Cassino</a>
-      <a href="#casino">✦ Cassino Ao Vivo</a>
+      <a href="#casino" data-page="casino"><img class="ui-icon" src="assets/icons/casino.svg" alt=""> Cassino</a>
+      <a href="#casino" data-page="casino-live">✦ Cassino Ao Vivo</a>
       <a href="#promocoes" data-page="promotions"><img class="ui-icon" src="assets/icons/promotions.svg" alt=""> Promoções</a>
       <a href="#resultados" data-page="results"><img class="ui-icon" src="assets/icons/results.svg" alt=""> Resultados</a>
     </nav>
@@ -66,19 +66,19 @@
 
           <div class="section-head competitions-head">
             <h2><i></i> Principais Competições</h2>
-            <a href="#">Ver todas →</a>
+            <a href="#" data-page="sport">Ver todas →</a>
           </div>
           <div class="competitions">
-            <div class="competition"><div class="comp-art premier">PL</div><b>Premier League</b><small>Inglaterra</small></div>
-            <div class="competition"><div class="comp-art laliga">LL</div><b>La Liga</b><small>Espanha</small></div>
-            <div class="competition"><div class="comp-art seriea">A</div><b>Série A</b><small>Brasil</small></div>
-            <div class="competition"><div class="comp-art champions">UCL</div><b>Champions League</b><small>Europa</small></div>
-            <div class="competition"><div class="comp-art libertadores">LIB</div><b>Libertadores</b><small>América do Sul</small></div>
+            <div class="competition" data-league="Premier League"><div class="comp-art premier">PL</div><b>Premier League</b><small>Inglaterra</small></div>
+            <div class="competition" data-league="La Liga"><div class="comp-art laliga">LL</div><b>La Liga</b><small>Espanha</small></div>
+            <div class="competition" data-league="Série A"><div class="comp-art seriea">A</div><b>Série A</b><small>Brasil</small></div>
+            <div class="competition" data-league="Champions League"><div class="comp-art champions">UCL</div><b>Champions League</b><small>Europa</small></div>
+            <div class="competition" data-league="Copa Libertadores"><div class="comp-art libertadores">LIB</div><b>Libertadores</b><small>América do Sul</small></div>
           </div>
         </section>
 
         <section class="live-panel" id="live">
-          <div class="live-head"><h2><span class="live-dot"></span> Ao Vivo</h2><a href="#">Ver todos →</a></div>
+          <div class="live-head"><h2><span class="live-dot"></span> Ao Vivo</h2><a href="#" data-page="live-all">Ver todos →</a></div>
           <div class="live-tabs"><button class="on">Futebol <b>12</b></button></div>
           <div id="live-games"></div>
         </section>
@@ -102,7 +102,7 @@
         <button class="bet-button" id="place-bet">Fazer aposta</button>
       </div>
       <div class="side-promo" aria-label="Cashback semanal"></div>
-      <div class="casino-mini" id="casino" aria-label="Cassino"></div>
+      <div class="casino-mini" id="casino" data-page="casino" aria-label="Cassino"></div>
     </aside>
   </div>
 </div>
