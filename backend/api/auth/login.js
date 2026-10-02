@@ -1,0 +1,2 @@
+import {cors,json,method} from '../../lib/http.js';import {supabaseAnon} from '../../lib/supabase.js';
+export default async function handler(req,res){if(cors(req,res)||!method(req,res,['POST']))return;const {email,password}=req.body||{};if(!email||!password)return json(res,400,{ok:false,error:'Informe e-mail e senha.'});const {data,error}=await supabaseAnon().auth.signInWithPassword({email,password});if(error)return json(res,401,{ok:false,error:'E-mail ou senha inválidos.'});return json(res,200,{ok:true,user:data.user,session:data.session});}
