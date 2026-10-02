@@ -22,6 +22,10 @@ Não precisa de servidor para testar a interface.
 
 Abra `index.html` no navegador.
 
+## Imagens
+
+O protótipo agora usa as imagens visuais da referência enviada: banner principal, bônus lateral, cashback e cassino.
+
 ## Observação
 
 Este pacote é somente um protótipo. Saldo, odds, jogos, retorno e apostas são fictícios e não movimentam dinheiro real.
