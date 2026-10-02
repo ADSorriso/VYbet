@@ -5,6 +5,7 @@ const service=process.env.SUPABASE_SERVICE_ROLE_KEY;
 if(!url||!anon) console.warn('Configure SUPABASE_URL e SUPABASE_ANON_KEY.');
 export const supabaseAnon=()=>createClient(url,anon,{auth:{persistSession:false,autoRefreshToken:false}});
 export const supabaseAdmin=()=>createClient(url,service||anon,{auth:{persistSession:false,autoRefreshToken:false}});
+export const supabaseUser=(token)=>createClient(url,anon,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:`Bearer ${token}`}}});
 export async function requireUser(req){
  const token=(req.headers.authorization||'').replace(/^Bearer\s+/i,'');
  if(!token) return {error:'Token ausente'};

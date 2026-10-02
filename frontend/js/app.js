@@ -508,10 +508,19 @@ placeBetBtn.onclick=async()=>{
       selection:x.selection,
       odd:Number(x.odd)
     }));
-    await apiRequest('/api/bets',{method:'POST',body:JSON.stringify({stake,selections})});
+    const result=await apiRequest('/api/bets',{method:'POST',body:JSON.stringify({stake,selections})});
+    if(authProfile && Number.isFinite(Number(result.demo_balance))){
+      authProfile.demo_balance=Number(result.demo_balance);
+    }
     slip=[];
     renderSlip();
-    showToast('Aposta de demonstração salva na sua conta.');
+    const remaining=Number(result.demo_balance);
+    const balanceText=Number.isFinite(remaining)
+      ? remaining.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})
+      : '';
+    showToast(balanceText
+      ? `Aposta salva. Saldo demo: ${balanceText}`
+      : 'Aposta de demonstração salva na sua conta.');
   }catch(err){
     if(/Sessão inválida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); }
     showToast(err.message || 'Não foi possível salvar a aposta.');
