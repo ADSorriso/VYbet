@@ -46,3 +46,5 @@ Para uma plataforma real seriam necessárias, entre outras coisas, arquitetura d
 - Banner, bônus, cashback e cassino usam as artes de referência completas, sem cortes.
 - Artes foram ampliadas e levemente refinadas para melhorar a nitidez.
 - Textos e odds do conteúdo ficam em branco para maior contraste.
+
+- Ícones das categorias esportivas corrigidos para branco em estado normal e verde no estado ativo/hover, com contraste reforçado.

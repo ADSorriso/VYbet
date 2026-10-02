@@ -210,3 +210,39 @@ button,input{font:inherit}.app-shell{min-height:100vh}.topbar{height:74px;border
   .side-promo{aspect-ratio:350/168}
   .casino-mini{aspect-ratio:350/150}
 }
+
+/* ===== Sport category icons: high-contrast correction ===== */
+.sport-tabs button img,
+.sport-tabs button .ui-icon{
+  width:25px !important;
+  height:25px !important;
+  min-width:25px !important;
+  min-height:25px !important;
+  max-width:25px !important;
+  max-height:25px !important;
+  display:block !important;
+  opacity:1 !important;
+  visibility:visible !important;
+  filter:brightness(0) invert(1) !important;
+  color:#FFFFFF !important;
+}
+
+.sport-tabs button{
+  color:#FFFFFF !important;
+}
+
+.sport-tabs button span{
+  color:#F4F7F7 !important;
+}
+
+.sport-tabs button.selected img,
+.sport-tabs button:hover img,
+.sport-tabs button.selected .ui-icon,
+.sport-tabs button:hover .ui-icon{
+  filter:brightness(0) saturate(100%) invert(85%) sepia(89%) saturate(2092%) hue-rotate(65deg) brightness(104%) contrast(104%) !important;
+}
+
+.sport-tabs button.selected span,
+.sport-tabs button:hover span{
+  color:#FFFFFF !important;
+}
