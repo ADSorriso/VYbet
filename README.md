@@ -31,3 +31,9 @@ O protótipo agora usa as imagens visuais da referência enviada: banner princip
 Este pacote é somente um protótipo. Saldo, odds, jogos, retorno e apostas são fictícios e não movimentam dinheiro real.
 
 Para uma plataforma real seriam necessárias, entre outras coisas, arquitetura de backend, autenticação, banco transacional, KYC, controles de risco, provedores de eventos/odds, pagamentos, auditoria, segurança e conformidade regulatória aplicável.
+
+
+## Refinamento visual
+- Ícones SVG próprios no mesmo estilo monocromático da arte de referência.
+- Ícones substituem emojis na navegação, sidebar e categorias.
+- Hero, bônus, cashback e cassino agora preservam a imagem inteira sem cortes.

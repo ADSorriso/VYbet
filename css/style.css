@@ -13,3 +13,70 @@ button,input{font:inherit}.app-shell{min-height:100vh}.topbar{height:74px;border
 .rightbar{border-left:1px solid var(--border);padding:10px 10px;position:sticky;top:74px;height:calc(100vh - 74px);overflow:auto}.bet-header{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:9px 9px 0 0;overflow:hidden}.bet-header button,.bet-types button{border:0;background:#0b1215;color:#9ba4a8;padding:14px 8px;cursor:pointer}.bet-header .active{color:#fff;border-bottom:2px solid var(--green)}.bet-header b{background:var(--green);color:#06100a;border-radius:10px;padding:2px 6px;margin-left:4px}.bet-types{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--border);border-top:0}.bet-types button.active{color:#fff;border-bottom:2px solid var(--green)}.bet-item{padding:13px 10px;border-bottom:1px solid var(--border)}.bet-item-top{display:flex;justify-content:space-between;gap:5px}.bet-item b{font-size:12px}.remove{color:#798488;cursor:pointer}.bet-item small{display:block;color:#849095;font-size:9px;margin-top:4px}.bet-odd{float:right;font-weight:800}.bet-summary{border:1px solid var(--border);border-top:0;padding:12px 10px}.row{display:flex;align-items:center;gap:7px;margin:7px 0;font-size:11px}.row span:first-child{flex:1}.green{color:var(--green)}.toggle{margin-left:auto;position:relative}.toggle input{display:none}.toggle i{display:block;width:40px;height:22px;background:#15201d;border:1px solid #2d4b3a;border-radius:20px}.toggle i:after{content:"";display:block;width:16px;height:16px;background:#fff;border-radius:50%;margin:2px 2px 0 20px}.stake{display:flex;align-items:center;justify-content:space-between;color:#a4adb0;font-size:11px;margin:12px 0}.stake input{width:105px;background:#10191d;border:1px solid #2b363a;border-radius:7px;padding:8px;color:#fff;text-align:right;outline:0}.return{display:flex;justify-content:space-between;align-items:end;margin:10px 0}.return span{font-size:11px;color:#a4adb0}.return strong{font-size:18px;color:var(--green)}.bet-button{width:100%;font-size:14px}.side-promo{margin-top:10px;border:1px solid #24482e;border-radius:9px;padding:0;height:168px;background:#0a1711 url("../assets/cashback-reference.jpg") center/cover no-repeat;min-height:125px;overflow:hidden}.side-promo strong,.side-promo p,.side-promo button{display:none}.side-promo button{width:auto;border:1px solid var(--green);background:transparent;color:var(--green);margin-top:2px}.casino-mini{margin-top:10px;height:150px;border:1px solid var(--border);border-radius:9px;background:#091013 url("../assets/casino-reference.jpg") center/cover no-repeat;overflow:hidden}.casino-title,.casino-mini>p,.casino-games{display:none}.casino-games span{height:73px;border:1px solid #283239;border-radius:7px;display:grid;place-items:center;align-content:center;background:linear-gradient(135deg,#24121b,#10191d);font-size:20px}.casino-games small{font-size:8px;color:#d5dbdc}.toast{position:fixed;right:22px;bottom:22px;background:#0f1d16;border:1px solid #2b6c42;color:#eaffee;padding:12px 16px;border-radius:8px;opacity:0;transform:translateY(15px);transition:.25s;z-index:50;pointer-events:none}.toast.show{opacity:1;transform:none}
 @media(max-width:1200px){.layout{grid-template-columns:190px minmax(560px,1fr)}.rightbar{display:none}.topnav a:nth-child(n+4){display:none}.content{max-width:none}.hero-points{right:20px}.hero-player{right:190px}}
 @media(max-width:850px){.topbar{height:62px;padding:0 12px}.brand{font-size:29px}.topnav,.search,.balance,.profile{display:none}.top-actions{margin-left:auto}.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:8px}.hero{height:300px}.hero-copy{left:22px}.hero h1{font-size:34px}.hero-points{display:none}.hero-player{display:none}.sport-tabs{grid-template-columns:repeat(4,1fr)}.sport-tabs button{height:62px}.main-grid{grid-template-columns:1fr}.live-panel{margin-top:5px}.competitions{grid-template-columns:repeat(2,1fr)}.competitions .competition:last-child{display:none}.match{grid-template-columns:55px 1fr repeat(3,55px)}.match .trend,.match .star{display:none}.odds{height:42px}.filters{display:none}.results-placeholder{display:block}.results-placeholder button{margin-top:10px}.rightbar{display:none}}
+
+
+/* ===== VYBET visual refinement: reference icon family + image framing ===== */
+.ui-icon,.sport-tabs img,.sport-side img,.search-icon{
+  width:20px;height:20px;display:block;object-fit:contain;
+  filter:brightness(0) saturate(100%) invert(78%) sepia(7%) saturate(260%) hue-rotate(151deg) brightness(91%);
+}
+.topnav .ui-icon{width:16px;height:16px;margin-right:6px}
+.topnav a.active .ui-icon,.topnav a:hover .ui-icon,
+.side-link.active .ui-icon,.side-link:hover .ui-icon{
+  filter:brightness(0) saturate(100%) invert(85%) sepia(89%) saturate(2092%) hue-rotate(64deg) brightness(104%) contrast(104%);
+}
+.search-icon{width:18px;height:18px;opacity:.85}
+.sport-tabs button{font-size:14px}
+.sport-tabs img{width:25px;height:25px}
+.sport-tabs button.selected img,.sport-tabs button:hover img{
+  filter:brightness(0) saturate(100%) invert(85%) sepia(89%) saturate(2092%) hue-rotate(64deg) brightness(104%) contrast(104%);
+}
+.sport-side span,.side-link span{display:grid;place-items:center}
+.sport-side img{width:18px;height:18px}
+
+/* Preserve the full AI-generated artwork instead of cropping it. */
+.hero{
+  height:auto;
+  aspect-ratio:896/244;
+  min-height:220px;
+  background-size:100% 100%;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.welcome-bonus{
+  width:100%;
+  height:auto;
+  aspect-ratio:223/189;
+  min-height:0;
+  background-size:100% 100%;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.side-promo{
+  width:100%;
+  height:auto;
+  aspect-ratio:350/168;
+  min-height:0;
+  background-size:100% 100%;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.casino-mini{
+  width:100%;
+  height:auto;
+  aspect-ratio:350/150;
+  min-height:0;
+  background-size:100% 100%;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+
+/* Slightly wider rails so the artwork and icons breathe like the concept art. */
+@media(min-width:1201px){
+  .layout{grid-template-columns:235px minmax(650px,1fr) 350px}
+  .content{max-width:1180px}
+  .sidebar{padding-left:14px;padding-right:14px}
+}
+@media(max-width:850px){
+  .hero{aspect-ratio:896/244;min-height:0}
+}

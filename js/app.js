@@ -1,7 +1,7 @@
 const sports = [
-  ["⚽","Futebol","1.245"],["◉","Basquete","342"],["◯","Tênis","287"],["◈","Vôlei","156"],
-  ["⚒","MMA","94"],["🎮","eSports","210"],["F1","F1","76"],["●","Beisebol","52"],
-  ["◉","Handebol","93"],["●","Futebol Americano","105"],["♟","Boxe","48"],["•••","Mais Esportes",""]
+  ["football","Futebol","1.245"],["basketball","Basquete","342"],["tennis","Tênis","287"],["volleyball","Vôlei","156"],
+  ["mma","MMA","94"],["esports","eSports","210"],["f1","F1","76"],["table-tennis","Tênis de Mesa","52"],
+  ["more","Mais Esportes",""]
 ];
 
 const matches = [
@@ -23,7 +23,7 @@ const sportsList = document.getElementById("sports-list");
 sports.forEach(([icon,name,count])=>{
   const a=document.createElement("a");
   a.className="sport-side"; a.href="#esportes";
-  a.innerHTML=`<span>${icon}</span><label>${name}</label><b>${count}</b>`;
+  a.innerHTML=`<span><img class="ui-icon" src="assets/icons/${icon}.svg" alt=""></span><label>${name}</label><b>${count}</b>`;
   sportsList.appendChild(a);
 });
 
