@@ -46,7 +46,12 @@ function renderMatches(list = matches) {
       <button class="odds" data-match-id="${m.id}" data-market="Resultado Final" data-selection="${m.home}" data-odd="${m.odds.home}"><span class="odd-label">1</span>${m.odds.home}</button>
       <button class="odds" data-match-id="${m.id}" data-market="Resultado Final" data-selection="Empate" data-odd="${m.odds.draw}"><span class="odd-label">X</span>${m.odds.draw}</button>
       <button class="odds" data-match-id="${m.id}" data-market="Resultado Final" data-selection="${m.away}" data-odd="${m.odds.away}"><span class="odd-label">2</span>${m.odds.away}</button>
-      <button class="star" aria-label="Favoritar partida">☆</button>`;
+      <button class="star" aria-label="Favoritar partida">☆</button>
+      <div class="total-market">
+        <span class="market-name">TOTAL DE GOLS</span>
+        <button class="odds total-odd" data-match-id="${m.id}" data-market="Total de Gols" data-selection="Mais de 2.5" data-odd="${m.totals.over}"><span class="odd-label">Mais de 2.5</span>${m.totals.over}</button>
+        <button class="odds total-odd" data-match-id="${m.id}" data-market="Total de Gols" data-selection="Menos de 2.5" data-odd="${m.totals.under}"><span class="odd-label">Menos de 2.5</span>${m.totals.under}</button>
+      </div>`;
     matchesBox.appendChild(el);
   });
 }
@@ -65,12 +70,8 @@ function renderLive(list = live) {
   });
 }
 
-let slip = [
-  {matchId:'mci-ars', selection:'Manchester City', market:'Resultado Final', event:'Man City x Arsenal', odd:1.85},
-  {matchId:'rma-bar', selection:'Real Madrid', market:'Resultado Final', event:'Real Madrid x Barcelona', odd:2.10},
-  {matchId:'fla-pal', selection:'Mais de 2.5', market:'Total de Gols', event:'Flamengo x Palmeiras', odd:1.80}
-];
-let betMode = 'multiple';
+let slip = [];
+let betMode = 'single';
 
 function renderSlip() {
   slipBox.innerHTML = '';
@@ -107,6 +108,7 @@ function addSelection({matchId, selection, market='Resultado Final', event, odd}
   const existing = slip.findIndex(x => x.matchId === matchId);
   const item = {matchId, selection, market, event, odd:numericOdd};
   if (existing >= 0) slip.splice(existing, 1, item); else slip.push(item);
+  if(slip.length>1) setBetMode('multiple'); else setBetMode('single');
   renderSlip();
   showToast(existing >= 0 ? 'Seleção atualizada no cupom.' : 'Seleção adicionada ao cupom.');
 }
@@ -141,6 +143,7 @@ slipBox.addEventListener('click', e => {
   const btn = e.target.closest('.remove');
   if (!btn) return;
   slip.splice(Number(btn.dataset.i),1);
+  if(slip.length<2) setBetMode('single');
   renderSlip();
   showToast('Seleção removida.');
 });
@@ -148,12 +151,26 @@ slipBox.addEventListener('click', e => {
 document.getElementById('stake').addEventListener('input', recalc);
 document.querySelector('.toggle input')?.addEventListener('change', recalc);
 
+function setBetMode(mode){
+  betMode=mode;
+  document.querySelectorAll('.bet-types button').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.mode===mode);
+  });
+  recalc();
+}
+
 document.querySelectorAll('.bet-types button').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.bet-types button').forEach(x => x.classList.remove('active'));
-    btn.classList.add('active');
-    betMode = btn.textContent.trim() === 'Múltipla' ? 'multiple' : 'single';
-    recalc();
+    const mode=btn.dataset.mode;
+    if(mode==='single' && slip.length>1){
+      showToast('Simples aceita uma seleção. Remova seleções ou use Múltipla.');
+      return;
+    }
+    if(mode==='multiple' && slip.length<2){
+      showToast('Múltipla precisa de pelo menos duas seleções.');
+      return;
+    }
+    setBetMode(mode);
   });
 });
 
@@ -496,6 +513,8 @@ const placeBetBtn=document.getElementById('place-bet');
 placeBetBtn.onclick=async()=>{
   if(!currentUser()){ showToast('Entre na sua conta para fazer uma aposta de demonstração.'); openPage('login'); return; }
   if(!slip.length)return showToast('Adicione uma seleção ao cupom primeiro.');
+  if(betMode==='single' && slip.length!==1)return showToast('Aposta simples aceita somente uma seleção.');
+  if(betMode==='multiple' && slip.length<2)return showToast('Aposta múltipla precisa de pelo menos duas seleções.');
   const stake=Number(document.getElementById('stake').value)||0;
   if(stake<=0)return showToast('Informe um valor de demonstração maior que zero.');
   placeBetBtn.disabled=true;

@@ -19,10 +19,10 @@ window.VYBET_DATA = {
     'Corinthians': { id:'cor', sport:'football', league:'Série A', logo:'assets/teams/football/corinthians.svg' }
   },
   matches: [
-    {id:'mci-ars', sport:'football', day:'Hoje', time:'16:00', league:'Premier League', home:'Manchester City', away:'Arsenal', odds:{home:'1.85',draw:'3.60',away:'4.20'}, extra:'+320'},
-    {id:'rma-bar', sport:'football', day:'Hoje', time:'18:30', league:'La Liga', home:'Real Madrid', away:'Barcelona', odds:{home:'2.10',draw:'3.50',away:'3.10'}, extra:'+412'},
-    {id:'fla-pal', sport:'football', day:'Hoje', time:'21:00', league:'Série A', home:'Flamengo', away:'Palmeiras', odds:{home:'2.45',draw:'3.20',away:'2.90'}, extra:'+287'},
-    {id:'riv-boc', sport:'football', day:'Hoje', time:'21:30', league:'Copa Libertadores', home:'River Plate', away:'Boca Juniors', odds:{home:'2.15',draw:'3.10',away:'3.45'}, extra:'+301'}
+    {id:'mci-ars', sport:'football', day:'Hoje', time:'16:00', league:'Premier League', home:'Manchester City', away:'Arsenal', odds:{home:'1.85',draw:'3.60',away:'4.20'}, totals:{over:'1.72',under:'2.05'}, extra:'+320'},
+    {id:'rma-bar', sport:'football', day:'Hoje', time:'18:30', league:'La Liga', home:'Real Madrid', away:'Barcelona', odds:{home:'2.10',draw:'3.50',away:'3.10'}, totals:{over:'1.68',under:'2.10'}, extra:'+412'},
+    {id:'fla-pal', sport:'football', day:'Hoje', time:'21:00', league:'Série A', home:'Flamengo', away:'Palmeiras', odds:{home:'2.45',draw:'3.20',away:'2.90'}, totals:{over:'1.80',under:'1.95'}, extra:'+287'},
+    {id:'riv-boc', sport:'football', day:'Hoje', time:'21:30', league:'Copa Libertadores', home:'River Plate', away:'Boca Juniors', odds:{home:'2.15',draw:'3.10',away:'3.45'}, totals:{over:'1.88',under:'1.87'}, extra:'+301'}
   ],
   live: [
     {id:'liv-new', sport:'football', clock:"45'", home:'Liverpool', away:'Newcastle', scoreHome:'1', scoreAway:'0', odds:['1.40','4.20','7.50'], extra:'+120'},

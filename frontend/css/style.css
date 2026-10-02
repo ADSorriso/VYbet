@@ -339,3 +339,11 @@ body.modal-open{overflow:hidden}
 /* ===== Auth real ===== */
 .auth-runtime{display:flex;align-items:center;gap:8px}.account-chip,.logout-btn{height:46px;border-radius:9px;cursor:pointer;font-weight:700}.account-chip{display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid #21402b;background:#0c1811;color:#eef7f0}.account-dot{width:8px;height:8px;border-radius:50%;background:#2bff5b;box-shadow:0 0 10px rgba(43,255,91,.6)}.logout-btn{padding:0 14px;border:1px solid #243238;background:#0d1418;color:#aeb9bd}.logout-btn:hover,.account-chip:hover{border-color:#2bff5b}.primary-action:disabled{opacity:.65;cursor:wait}
 @media(max-width:850px){.auth-runtime{margin-left:auto}.account-chip{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.logout-btn{display:none}}
+
+/* VYBET: mercados adicionais e cupom simples/multipla */
+.total-market{grid-column:2/7;display:grid;grid-template-columns:minmax(120px,1fr) 120px 120px;gap:6px;align-items:center;padding:7px 0 2px;border-top:1px solid #152126;margin-top:4px}
+.market-name{font-size:9px;font-weight:800;letter-spacing:.7px;color:#8d999d}
+.total-market .odds{height:38px;flex-direction:row;gap:8px}
+.total-market .odd-label{margin:0;font-size:9px}
+.bet-types{grid-template-columns:repeat(2,1fr)!important}
+@media(max-width:850px){.match{grid-template-columns:55px 1fr repeat(3,55px)}.total-market{grid-column:2/6;grid-template-columns:1fr 1fr}.total-market .market-name{grid-column:1/-1}.total-market .odds{height:36px}}
