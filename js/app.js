@@ -257,6 +257,30 @@ function openPage(page){
       <div class="bet-history-tabs"><button class="active">Todas</button><button>Abertas</button><button>Encerradas</button></div>
       <div class="history-list">${demoBets.map(b=>`<div class="history-item"><div><small>${b.date}</small><b>${b.selection}</b><span>${b.event}</span></div><div class="history-meta"><strong>${b.odd}</strong><em class="${b.status==='Aberta'?'open':''}">${b.status}</em></div></div>`).join('')}</div>
       <div class="history-summary"><span>Total de apostas <b>3</b></span><span>Retorno simulado <b>R$ 428,70</b></span></div>`,
+    results: `
+      <div class="account-head"><span>PLACARES</span><h1>Resultados</h1><p>Resultados de demonstração organizados por competição.</p></div>
+      <div class="feature-tabs"><button class="active">Hoje</button><button>Ontem</button><button>Esta semana</button></div>
+      <div class="feature-list">
+        <div class="result-card"><small>Premier League · Encerrado</small><div><b>Manchester City</b><strong>2</strong></div><div><b>Arsenal</b><strong>1</strong></div></div>
+        <div class="result-card"><small>La Liga · Encerrado</small><div><b>Real Madrid</b><strong>3</strong></div><div><b>Barcelona</b><strong>2</strong></div></div>
+        <div class="result-card"><small>Série A · Encerrado</small><div><b>Flamengo</b><strong>1</strong></div><div><b>Palmeiras</b><strong>1</strong></div></div>
+      </div>`,
+    promotions: `
+      <div class="account-head"><span>OFERTAS</span><h1>Promoções</h1><p>Área visual de promoções do protótipo VYBET.</p></div>
+      <div class="promo-grid">
+        <article><span>BOAS-VINDAS</span><h2>Bônus 100%</h2><p>Card demonstrativo para a primeira experiência no site.</p><button class="primary-action">Ver detalhes</button></article>
+        <article><span>SEMANAL</span><h2>Cashback</h2><p>Área demonstrativa para campanhas e benefícios semanais.</p><button class="primary-action">Ver detalhes</button></article>
+        <article><span>VIP</span><h2>Benefícios VIP</h2><p>Campanhas exclusivas apresentadas conforme o nível da conta.</p><button class="primary-action" data-page="vip">Conhecer VIP</button></article>
+      </div>`,
+    vip: `
+      <div class="account-head"><span>VYBET VIP</span><h1>Clube VIP</h1><p>Progressão visual e benefícios de demonstração do programa VIP.</p></div>
+      <div class="vip-hero"><img src="assets/icons/crown.svg" alt=""><div><small>NÍVEL ATUAL</small><h2>VIP Bronze</h2><p>0 / 1.000 pontos para o próximo nível</p><div class="vip-progress"><i></i></div></div></div>
+      <div class="vip-levels"><div><b>Bronze</b><span>Nível inicial</span></div><div><b>Prata</b><span>1.000 pts</span></div><div><b>Ouro</b><span>5.000 pts</span></div><div><b>Diamante</b><span>15.000 pts</span></div></div>
+      <div class="vip-benefits"><div><b>🎁 Campanhas</b><span>Benefícios demonstrativos por nível</span></div><div><b>⚡ Prioridade</b><span>Experiência diferenciada no protótipo</span></div><div><b>👑 Status</b><span>Progressão visual da conta</span></div></div>`,
+    sport: `
+      <div class="account-head"><span>ESPORTES</span><h1 id="sport-page-title">Futebol</h1><p>Competições, partidas e mercados disponíveis no protótipo.</p></div>
+      <div class="league-grid"><button>Premier League <span>›</span></button><button>La Liga <span>›</span></button><button>Brasileirão <span>›</span></button><button>Champions League <span>›</span></button><button>Libertadores <span>›</span></button><button>Ver todas <span>›</span></button></div>
+      <div class="sport-page-games"><h3>Próximas partidas</h3>${matches.slice(0,4).map(m=>`<div><span><small>${m.league}</small><b>${m.home} × ${m.away}</b></span><strong>${m.time}</strong></div>`).join('')}</div>`,
   };
   pageContent.innerHTML = pages[page] || pages.profile;
   pageOverlay.classList.add('open');
@@ -271,3 +295,16 @@ pageClose?.addEventListener('click',closePage);
 pageOverlay?.addEventListener('click',e=>{if(e.target===pageOverlay)closePage()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&pageOverlay?.classList.contains('open'))closePage()});
 document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();openPage(el.dataset.page)}));
+
+
+// ===== Navegação de esportes e páginas complementares =====
+document.querySelectorAll('.sport-side').forEach(el=>el.addEventListener('click',e=>{
+  e.preventDefault(); openPage('sport');
+  const title=pageContent.querySelector('#sport-page-title');
+  if(title) title.textContent=el.querySelector('label')?.textContent || 'Esportes';
+}));
+document.querySelectorAll('.sport-tabs button').forEach(el=>el.addEventListener('dblclick',()=>{
+  openPage('sport'); const title=pageContent.querySelector('#sport-page-title'); if(title) title.textContent=el.textContent.trim();
+}));
+document.querySelector('.results-placeholder .outline')?.addEventListener('click',()=>openPage('results'));
+document.querySelector('.vip-badge')?.addEventListener('click',()=>openPage('vip'));
