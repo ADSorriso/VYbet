@@ -1,56 +1,25 @@
-# VYBET — Protótipo de Plataforma de Apostas
+# VYBET — Protótipo funcional de interface
 
-Protótipo visual e interativo inspirado no layout criado para a VYBET.
+Protótipo estático de uma plataforma esportiva com dinheiro/odds fictícios. Não há pagamentos reais, saque, depósito ou integração com uma casa de apostas.
 
-## Incluído
-- Dashboard desktop responsivo
-- Navegação lateral e superior
-- Banner principal
-- Categorias esportivas
-- Jogos em destaque com odds fictícias
-- Área de jogos ao vivo
-- Cupom de apostas interativo
-- Cálculo de cotação e possível retorno
-- Promoções
-- Área de cassino visual
-- Responsividade para celular
-- Toasts e interações em JavaScript
+## O que foi implementado
+- Layout desktop inspirado no conceito visual VYBET.
+- Sistema de dados separado em `js/data.js`.
+- Cadastro local de equipes com `id`, esporte, liga e escudo.
+- Escudos estilizados locais para os times exibidos no protótipo.
+- Partidas e jogos ao vivo modelados por IDs.
+- Cupom funcional: adicionar, substituir seleção da mesma partida, remover e recalcular cota/retorno.
+- Alternância Simples/Múltipla no protótipo.
+- Filtros de esporte e busca por time/campeonato.
+- Favoritos visuais.
 
-## Executar
+## Próxima etapa
+Substituir os dados fictícios por um backend próprio e uma fonte licenciada de dados esportivos. O TheSportsDB documenta endpoints para buscar equipes, listar equipes de uma liga e obter `strBadge`; a disponibilidade e os limites dependem do plano da API. Consulte a documentação oficial antes de usar em produção.
 
-Não precisa de servidor para testar a interface.
+https://www.thesportsdb.com/documentation
 
-Abra `index.html` no navegador.
+## Observação sobre escudos
+Os arquivos em `assets/teams/` desta versão são **escudos estilizados para protótipo**, não cópias oficiais dos emblemas. Para uma versão comercial, devemos integrar uma fonte de dados/artwork com direitos de uso adequados.
 
-## Imagens
-
-O protótipo agora usa as imagens visuais da referência enviada: banner principal, bônus lateral, cashback e cassino.
-
-## Observação
-
-Este pacote é somente um protótipo. Saldo, odds, jogos, retorno e apostas são fictícios e não movimentam dinheiro real.
-
-Para uma plataforma real seriam necessárias, entre outras coisas, arquitetura de backend, autenticação, banco transacional, KYC, controles de risco, provedores de eventos/odds, pagamentos, auditoria, segurança e conformidade regulatória aplicável.
-
-
-## Refinamento visual
-- Ícones SVG próprios no mesmo estilo monocromático da arte de referência.
-- Ícones substituem emojis na navegação, sidebar e categorias.
-- Hero, bônus, cashback e cassino agora preservam a imagem inteira sem cortes.
-
-
-## Correção final de visual
-- SVGs com traço claro/branco para leitura em fundo escuro.
-- Tamanhos dos ícones limitados por CSS para impedir ícones gigantes.
-- Ícones ativos ficam verdes.
-- Banner, bônus, cashback e cassino usam as artes de referência completas, sem cortes.
-- Artes foram ampliadas e levemente refinadas para melhorar a nitidez.
-- Textos e odds do conteúdo ficam em branco para maior contraste.
-
-- Ícones das categorias esportivas corrigidos para branco em estado normal e verde no estado ativo/hover, com contraste reforçado.
-
-- Barra superior atualizada: removidos presente e sino; adicionada coroa VIP dourada e botões Entrar/Criar conta conforme a referência.
-
-
-## Sistema de equipes e escudos
-A interface agora usa um catálogo local de equipes para as partidas do protótipo. Cada time possui um identificador visual e um caminho de logo separado do HTML. Na próxima etapa, o catálogo pode ser substituído por dados de uma API esportiva, mantendo o mesmo componente visual.
+## Como testar
+Abra `index.html` em um navegador. Para testar recursos que dependam de `fetch` no futuro, use um servidor local (por exemplo, Live Server).

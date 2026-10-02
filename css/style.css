@@ -299,3 +299,12 @@ button,input{font:inherit}.app-shell{min-height:100vh}.topbar{height:74px;border
 /* Team logos */
 .team-line{display:flex;align-items:center;gap:9px;min-height:27px;font-weight:700;color:#f4f7f7}.team-logo{width:24px;height:24px;object-fit:contain;flex:0 0 24px}.live-team>span{display:flex;align-items:center;gap:7px}.team-logo.mini{width:19px;height:19px;flex-basis:19px}.teams .league{margin-bottom:4px}
 @media (max-width: 850px){.team-line{font-size:12px}.team-logo{width:22px;height:22px;flex-basis:22px}}
+
+/* ===== Functional betting prototype polish ===== */
+.match .league{display:flex;align-items:center;gap:7px}
+.league-dot{width:6px;height:6px;border-radius:50%;background:#42b47b;display:inline-block;box-shadow:0 0 8px rgba(66,180,123,.35)}
+.star{cursor:pointer;border:0;background:transparent;color:#6d7a7f;font-size:20px;line-height:1;padding:0}.star.favorite{color:#39ff63}
+.odds{cursor:pointer;transition:.18s ease}.odds:hover{border-color:#2bff5b!important;background:#10251a!important;transform:translateY(-1px)}
+.mini-odds button{border:1px solid #101d22;background:#101a1f;color:#eaf1f2;border-radius:5px;height:24px;font-size:10px;cursor:pointer}.mini-odds button:hover{border-color:#2bff5b;color:#2bff5b}
+.bet-item-top{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px}.remove{border:0;background:transparent;color:#7e8a8e;font-size:17px;cursor:pointer;padding:0}.remove:hover{color:#fff}.slip-empty{padding:24px 14px;display:grid;gap:6px;text-align:center;color:#aab5b9}.slip-empty b{color:#f4f7f7}.slip-empty span{font-size:11px;line-height:1.45}.empty-state{padding:30px;text-align:center;color:#8e9ba0}
+.team-logo{background:rgba(255,255,255,.02);border-radius:50%;padding:1px}.live-team .team-logo{padding:0}
