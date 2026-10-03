@@ -1,0 +1,19 @@
+﻿name: VYBET Automatic Results
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Atualizar jogos, odds e resultados
+        run: |
+          curl --fail --silent --show-error \
+            --retry 2 \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://backend-wine-delta-48.vercel.app/api/cron/settle-results"
