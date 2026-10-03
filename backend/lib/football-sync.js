@@ -1,5 +1,8 @@
 ﻿import {supabaseAdmin} from './supabase.js';
-import {fetchFixturesByDate,apiFootball} from './api-football.js';
+import {
+  fetchFixturesByDate,
+  apiFootball
+} from './api-football.js';
 
 export const validFootballDate=v=>
   /^\d{4}-\d{2}-\d{2}$/.test(String(v||''));
@@ -80,11 +83,32 @@ export function extractFootballOdds(item){
   return rows;
 }
 
-export async function syncFootball({
-  date=footballToday(),
-  fixture='',
-  auto=false,
-  limit=5
+async function saveOdds(db,fixtureId,body){
+  const oddsRows=(body?.response||[])
+    .flatMap(extractFootballOdds);
+
+  if(!oddsRows.length){
+    return 0;
+  }
+
+  const {error}=await db
+    .from('provider_odds')
+    .upsert(oddsRows,{
+      onConflict:
+        'provider,provider_fixture_id,bookmaker_id,market_id,selection_key'
+    });
+
+  if(error) throw error;
+
+  return oddsRows.length;
+}
+
+/*
+ * Atualiza somente partidas/resultados.
+ * Consome uma chamada de fixtures da API-Football.
+ */
+export async function syncFootballFixtures({
+  date=footballToday()
 }={}){
   const db=supabaseAdmin();
 
@@ -97,158 +121,11 @@ export async function syncFootball({
   if(fixtures.length){
     const {error}=await db
       .from('demo_match_results')
-      .upsert(fixtures,{onConflict:'match_key'});
-
-    if(error) throw error;
-  }
-
-  let oddsSaved=0;
-  let oddsRemaining=null;
-
-  const checkedFixtures=[];
-  const fixturesWithOdds=[];
-
-  if(fixture){
-    const {
-      body,
-      remaining:remainingOdds
-    }=await apiFootball('odds',{fixture});
-
-    oddsRemaining=remainingOdds;
-
-    const oddsRows=(body?.response||[])
-      .flatMap(extractFootballOdds);
-
-    checkedFixtures.push(String(fixture));
-
-    if(oddsRows.length){
-      const {error}=await db
-        .from('provider_odds')
-        .upsert(oddsRows,{
-          onConflict:
-            'provider,provider_fixture_id,bookmaker_id,market_id,selection_key'
-        });
-
-      if(error) throw error;
-
-      oddsSaved+=oddsRows.length;
-      fixturesWithOdds.push(String(fixture));
-    }
-  }
-
-  if(auto && !fixture){
-    const now=Date.now();
-
-    const futureFixtures=fixtures
-      .filter(item=>{
-        const start=new Date(item.start_time).getTime();
-
-        return (
-          item.status==='scheduled' &&
-          item.provider_status==='NS' &&
-          Number.isFinite(start) &&
-          start>now &&
-          item.provider_fixture_id
-        );
-      })
-      .sort(
-        (a,b)=>
-          new Date(a.start_time).getTime()-
-          new Date(b.start_time).getTime()
-      );
-
-    const fixtureIds=futureFixtures
-      .map(item=>String(item.provider_fixture_id));
-
-    const completeFixtures=new Set();
-
-    if(fixtureIds.length){
-      const {
-        data:storedOdds,
-        error:storedOddsError
-      }=await db
-        .from('provider_odds')
-        .select('provider_fixture_id,selection_key')
-        .eq('provider','api-football')
-        .eq('bookmaker_id',8)
-        .in('provider_fixture_id',fixtureIds);
-
-      if(storedOddsError) throw storedOddsError;
-
-      const selectionsByFixture=new Map();
-
-      for(const row of storedOdds||[]){
-        const id=String(row.provider_fixture_id);
-
-        if(!selectionsByFixture.has(id)){
-          selectionsByFixture.set(id,new Set());
-        }
-
-        selectionsByFixture
-          .get(id)
-          .add(String(row.selection_key));
-      }
-
-      const required=[
-        'Home',
-        'Draw',
-        'Away',
-        'Over 2.5',
-        'Under 2.5'
-      ];
-
-      for(const [id,selections] of selectionsByFixture){
-        if(required.every(key=>selections.has(key))){
-          completeFixtures.add(id);
-        }
-      }
-    }
-
-    const candidates=futureFixtures
-      .filter(
-        item=>
-          !completeFixtures.has(
-            String(item.provider_fixture_id)
-          )
-      )
-      .slice(
-        0,
-        clampFootballLimit(limit,1,10)
-      );
-
-    for(const candidate of candidates){
-      const fixtureId=String(
-        candidate.provider_fixture_id
-      );
-
-      checkedFixtures.push(fixtureId);
-
-      const {
-        body,
-        remaining:remainingOdds
-      }=await apiFootball('odds',{
-        fixture:fixtureId
+      .upsert(fixtures,{
+        onConflict:'match_key'
       });
 
-      oddsRemaining=remainingOdds;
-
-      const oddsRows=(body?.response||[])
-        .flatMap(extractFootballOdds);
-
-      if(!oddsRows.length) continue;
-
-      const {error}=await db
-        .from('provider_odds')
-        .upsert(oddsRows,{
-          onConflict:
-            'provider,provider_fixture_id,bookmaker_id,market_id,selection_key'
-        });
-
-      if(error) throw error;
-
-      oddsSaved+=oddsRows.length;
-      fixturesWithOdds.push(fixtureId);
-    }
+    if(error) throw error;
   }
 
   return {
@@ -256,6 +133,251 @@ export async function syncFootball({
     date,
     received:results,
     saved:fixtures.length,
+    mode:'fixtures-only',
+    remaining_requests:remaining
+  };
+}
+
+/*
+ * Atualiza odds de uma partida específica.
+ * Usado pelo modo manual.
+ */
+export async function syncFootballFixtureOdds({
+  fixture
+}={}){
+  const fixtureId=String(fixture||'').trim();
+
+  if(!fixtureId){
+    throw new Error('Fixture não informado.');
+  }
+
+  const db=supabaseAdmin();
+
+  const {
+    body,
+    remaining
+  }=await apiFootball('odds',{
+    fixture:fixtureId
+  });
+
+  const oddsSaved=await saveOdds(
+    db,
+    fixtureId,
+    body
+  );
+
+  return {
+    ok:true,
+    mode:'manual-odds',
+    fixture:fixtureId,
+    checked_fixtures:[fixtureId],
+    fixtures_with_odds:
+      oddsSaved>0
+        ? [fixtureId]
+        : [],
+    odds_saved:oddsSaved,
+    remaining_requests:remaining
+  };
+}
+
+/*
+ * Busca odds automaticamente usando partidas
+ * que já estão armazenadas no Supabase.
+ *
+ * Portanto NÃO faz uma nova chamada de fixtures.
+ */
+export async function syncFootballOdds({
+  limit=1
+}={}){
+  const db=supabaseAdmin();
+  const nowIso=new Date().toISOString();
+
+  const {
+    data:fixtures,
+    error:fixturesError
+  }=await db
+    .from('demo_match_results')
+    .select(
+      'provider_fixture_id,start_time,status,provider_status'
+    )
+    .eq('provider','api-football')
+    .eq('status','scheduled')
+    .eq('provider_status','NS')
+    .gt('start_time',nowIso)
+    .not('provider_fixture_id','is',null)
+    .order('start_time',{
+      ascending:true
+    })
+    .limit(200);
+
+  if(fixturesError) throw fixturesError;
+
+  const fixtureIds=(fixtures||[])
+    .map(item=>
+      String(item.provider_fixture_id||'')
+    )
+    .filter(Boolean);
+
+  const completeFixtures=new Set();
+
+  if(fixtureIds.length){
+    const {
+      data:storedOdds,
+      error:storedOddsError
+    }=await db
+      .from('provider_odds')
+      .select(
+        'provider_fixture_id,selection_key'
+      )
+      .eq('provider','api-football')
+      .eq('bookmaker_id',8)
+      .in('provider_fixture_id',fixtureIds);
+
+    if(storedOddsError){
+      throw storedOddsError;
+    }
+
+    const selectionsByFixture=new Map();
+
+    for(const row of storedOdds||[]){
+      const id=String(
+        row.provider_fixture_id
+      );
+
+      if(!selectionsByFixture.has(id)){
+        selectionsByFixture.set(
+          id,
+          new Set()
+        );
+      }
+
+      selectionsByFixture
+        .get(id)
+        .add(
+          String(row.selection_key)
+        );
+    }
+
+    const required=[
+      'Home',
+      'Draw',
+      'Away',
+      'Over 2.5',
+      'Under 2.5'
+    ];
+
+    for(
+      const [id,selections]
+      of selectionsByFixture
+    ){
+      if(
+        required.every(
+          key=>selections.has(key)
+        )
+      ){
+        completeFixtures.add(id);
+      }
+    }
+  }
+
+  const candidates=(fixtures||[])
+    .filter(item=>
+      !completeFixtures.has(
+        String(item.provider_fixture_id)
+      )
+    )
+    .slice(
+      0,
+      clampFootballLimit(limit,1,10)
+    );
+
+  let oddsSaved=0;
+  let remaining=null;
+
+  const checkedFixtures=[];
+  const fixturesWithOdds=[];
+
+  for(const candidate of candidates){
+    const fixtureId=String(
+      candidate.provider_fixture_id
+    );
+
+    checkedFixtures.push(fixtureId);
+
+    const result=await apiFootball(
+      'odds',
+      {
+        fixture:fixtureId
+      }
+    );
+
+    remaining=result.remaining;
+
+    const saved=await saveOdds(
+      db,
+      fixtureId,
+      result.body
+    );
+
+    oddsSaved+=saved;
+
+    if(saved>0){
+      fixturesWithOdds.push(
+        fixtureId
+      );
+    }
+  }
+
+  return {
+    ok:true,
+    mode:'odds-only',
+
+    checked_fixtures:checkedFixtures,
+    fixtures_with_odds:fixturesWithOdds,
+
+    odds_saved:oddsSaved,
+    remaining_requests:remaining
+  };
+}
+
+/*
+ * Wrapper mantido para compatibilidade
+ * com o endpoint administrativo existente.
+ */
+export async function syncFootball({
+  date=footballToday(),
+  fixture='',
+  auto=false,
+  limit=5
+}={}){
+  const fixturesResult=
+    await syncFootballFixtures({
+      date
+    });
+
+  let oddsResult=null;
+
+  if(fixture){
+    oddsResult=
+      await syncFootballFixtureOdds({
+        fixture
+      });
+  }else if(auto){
+    oddsResult=
+      await syncFootballOdds({
+        limit
+      });
+  }
+
+  return {
+    ok:true,
+    date,
+
+    received:
+      fixturesResult.received,
+
+    saved:
+      fixturesResult.saved,
 
     mode:fixture
       ? 'manual'
@@ -265,12 +387,17 @@ export async function syncFootball({
 
     fixture:fixture||null,
 
-    checked_fixtures:checkedFixtures,
-    fixtures_with_odds:fixturesWithOdds,
+    checked_fixtures:
+      oddsResult?.checked_fixtures||[],
 
-    odds_saved:oddsSaved,
+    fixtures_with_odds:
+      oddsResult?.fixtures_with_odds||[],
+
+    odds_saved:
+      oddsResult?.odds_saved||0,
 
     remaining_requests:
-      oddsRemaining??remaining
+      oddsResult?.remaining_requests ??
+      fixturesResult.remaining_requests
   };
 }

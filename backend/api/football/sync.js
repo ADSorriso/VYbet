@@ -1,4 +1,5 @@
 ﻿import {cors,json,method} from '../../lib/http.js';
+
 import {
   syncFootball,
   validFootballDate,
@@ -11,7 +12,10 @@ export default async function handler(req,res){
 
   const adminKey=process.env.VYBET_ADMIN_KEY;
 
-  if(!adminKey||req.headers['x-admin-key']!==adminKey){
+  if(
+    !adminKey ||
+    req.headers['x-admin-key']!==adminKey
+  ){
     return json(res,401,{
       ok:false,
       error:'Admin não autorizado.'
@@ -22,9 +26,12 @@ export default async function handler(req,res){
     ? String(req.query.date)
     : footballToday();
 
-  const fixture=String(req.query?.fixture||'').trim();
+  const fixture=String(
+    req.query?.fixture||''
+  ).trim();
 
-  const auto=String(req.query?.auto||'')==='1';
+  const auto=
+    String(req.query?.auto||'')==='1';
 
   const limit=clampFootballLimit(
     req.query?.limit||5,

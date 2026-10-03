@@ -1,10 +1,24 @@
 ﻿import {json,method} from '../../lib/http.js';
 import {supabaseAdmin} from '../../lib/supabase.js';
 import {settleMatch} from '../../lib/result-engine.js';
+
 import {
-  syncFootball,
+  syncFootballFixtures,
+  syncFootballOdds,
   footballToday
 } from '../../lib/football-sync.js';
+
+const SETTLEMENT_LIMIT=5;
+const FOOTBALL_SYNC_INTERVAL_MS=30*60*1000;
+
+function oddsWindow(){
+  const now=new Date();
+
+  return (
+    now.getUTCMinutes()<15 &&
+    now.getUTCHours()%3===0
+  );
+}
 
 export default async function handler(req,res){
   if(!method(req,res,['GET'])) return;
@@ -33,7 +47,7 @@ export default async function handler(req,res){
     )
     .eq('status','finished')
     .is('settled_at',null)
-    .limit(50);
+    .limit(SETTLEMENT_LIMIT);
 
   if(error){
     return json(res,500,{
@@ -54,12 +68,18 @@ export default async function handler(req,res){
         awayScore:m.away_score
       });
 
-      await db
+      const {
+        error:updateError
+      }=await db
         .from('demo_match_results')
         .update({
           settled_at:new Date().toISOString()
         })
         .eq('match_key',m.match_key);
+
+      if(updateError){
+        throw updateError;
+      }
 
       processed.push({
         match_key:m.match_key,
@@ -76,19 +96,89 @@ export default async function handler(req,res){
     }
   }
 
-  let footballSync=null;
+  let fixturesSync={
+    ok:true,
+    skipped:true,
+    reason:'not_due'
+  };
 
   try{
-    footballSync=await syncFootball({
-      date:footballToday(),
-      auto:true,
-      limit:1
-    });
+    const {
+      data:lastFixture,
+      error:lastFixtureError
+    }=await db
+      .from('demo_match_results')
+      .select('updated_at')
+      .eq('provider','api-football')
+      .order('updated_at',{
+        ascending:false
+      })
+      .limit(1)
+      .maybeSingle();
+
+    if(lastFixtureError){
+      throw lastFixtureError;
+    }
+
+    const lastUpdate=
+      lastFixture?.updated_at
+        ? new Date(
+            lastFixture.updated_at
+          ).getTime()
+        : 0;
+
+    const age=
+      Date.now()-lastUpdate;
+
+    const syncDue=
+      !lastUpdate ||
+      age>=FOOTBALL_SYNC_INTERVAL_MS;
+
+    if(syncDue){
+      fixturesSync=
+        await syncFootballFixtures({
+          date:footballToday()
+        });
+    }else{
+      fixturesSync={
+        ok:true,
+        skipped:true,
+        reason:'fixtures_recent',
+
+        next_sync_in_ms:
+          Math.max(
+            0,
+            FOOTBALL_SYNC_INTERVAL_MS-age
+          )
+      };
+    }
+
   }catch(e){
-    footballSync={
+    fixturesSync={
       ok:false,
       error:e.message
     };
+  }
+
+  let oddsSync={
+    ok:true,
+    skipped:true,
+    reason:'outside_odds_window'
+  };
+
+  if(oddsWindow()){
+    try{
+      oddsSync=
+        await syncFootballOdds({
+          limit:1
+        });
+
+    }catch(e){
+      oddsSync={
+        ok:false,
+        error:e.message
+      };
+    }
   }
 
   return json(res,200,{
@@ -99,6 +189,9 @@ export default async function handler(req,res){
       processed
     },
 
-    football_sync:footballSync
+    football_sync:{
+      fixtures:fixturesSync,
+      odds:oddsSync
+    }
   });
 }
