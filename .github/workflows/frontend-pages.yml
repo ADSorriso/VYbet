@@ -7,6 +7,7 @@ on:
     paths:
       - "frontend/**"
       - ".github/workflows/frontend-pages.yml"
+      - "index.html"
 
 permissions:
   contents: read
@@ -35,7 +36,8 @@ jobs:
       - name: Prepare frontend
         run: |
           mkdir -p _site
-          cp -R frontend/. _site/
+          cp index.html _site/index.html
+          cp -R frontend _site/frontend
           rm -rf _site/.vercel
           find _site -type f \( -name "*.backup.js" -o -name "*.before-*.js" -o -name "*-backup.js" \) -delete
 
@@ -47,3 +49,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+
+
+
