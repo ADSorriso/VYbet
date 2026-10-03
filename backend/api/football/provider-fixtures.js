@@ -13,7 +13,7 @@ export default async function handler(req,res){
   let q=db
     .from('demo_match_results')
     .select(
-      'match_key,provider_fixture_id,home_team,away_team,home_score,away_score,status,league_name,league_country,start_time,provider_status,elapsed'
+      'match_key,provider_fixture_id,home_team_id,home_team,home_team_logo,away_team_id,away_team,away_team_logo,home_score,away_score,status,league_id,league_name,league_logo,league_country,league_flag,start_time,provider_status,elapsed'
     )
     .eq('provider','api-football')
     .order('start_time',{ascending:true})

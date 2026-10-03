@@ -90,6 +90,37 @@ export function fixtureToRow(item){
     provider:'api-football',
     provider_fixture_id:id,
 
+    home_team_id:
+      item?.teams?.home?.id != null
+        ? Number(item.teams.home.id)
+        : null,
+
+    home_team_logo:String(
+      item?.teams?.home?.logo||''
+    ),
+
+    away_team_id:
+      item?.teams?.away?.id != null
+        ? Number(item.teams.away.id)
+        : null,
+
+    away_team_logo:String(
+      item?.teams?.away?.logo||''
+    ),
+
+    league_id:
+      item?.league?.id != null
+        ? Number(item.league.id)
+        : null,
+
+    league_logo:String(
+      item?.league?.logo||''
+    ),
+
+    league_flag:String(
+      item?.league?.flag||''
+    ),
+
     home_team:String(
       item?.teams?.home?.name||''
     ),
