@@ -1,48 +1,8 @@
 ﻿import {cors,json,method} from '../../lib/http.js';
 import {supabaseAdmin} from '../../lib/supabase.js';
-import {apiFootball} from '../../lib/api-football.js';
 
 export default async function handler(req,res){
   if(cors(req,res)||!method(req,res,['GET'])) return;
-
-  // Consulta direta de odds na API-Football.
-  // Mantida apenas para testes/administracao.
-  if(String(req.query?.odds||'') === '1'){
-    const fixture=String(req.query?.fixture||'').trim();
-    const date=String(req.query?.date||'').trim();
-
-    if(!fixture && !date){
-      return json(res,400,{
-        ok:false,
-        error:'Informe fixture ou date.'
-      });
-    }
-
-    try{
-      const params={};
-
-      if(fixture) params.fixture=fixture;
-      if(date) params.date=date;
-
-      const {body,remaining}=await apiFootball('odds',params);
-
-      return json(res,200,{
-        ok:true,
-        fixture:fixture||null,
-        date:date||null,
-        results:Number(body?.results||0),
-        paging:body?.paging||null,
-        remaining_requests:remaining,
-        odds:body?.response||[]
-      });
-
-    }catch(e){
-      return json(res,500,{
-        ok:false,
-        error:e.message
-      });
-    }
-  }
 
   // Lista partidas armazenadas no Supabase.
   // Esta parte NAO consome requisicoes da API-Football.
@@ -156,4 +116,5 @@ export default async function handler(req,res){
     matches:output
   });
 }
+
 
