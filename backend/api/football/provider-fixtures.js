@@ -1,4 +1,4 @@
-﻿import {cors,json,method} from '../../lib/http.js';
+import {cors,json,method} from '../../lib/http.js';
 import {supabaseAdmin} from '../../lib/supabase.js';
 
 export default async function handler(req,res){
@@ -13,7 +13,7 @@ export default async function handler(req,res){
   let q=db
     .from('demo_match_results')
     .select(
-      'match_key,provider_fixture_id,home_team,away_team,home_score,away_score,status,league_name,league_country,start_time,provider_status'
+      'match_key,provider_fixture_id,home_team,away_team,home_score,away_score,status,league_name,league_country,start_time,provider_status,elapsed'
     )
     .eq('provider','api-football')
     .order('start_time',{ascending:true})

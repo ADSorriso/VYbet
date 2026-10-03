@@ -1,4 +1,4 @@
-﻿const BASE_URL='https://v3.football.api-sports.io';
+const BASE_URL='https://v3.football.api-sports.io';
 
 const FINISHED=new Set(['FT','AET','PEN']);
 const LIVE=new Set(['1H','HT','2H','ET','BT','P','SUSP','INT','LIVE']);
@@ -123,6 +123,11 @@ export function fixtureToRow(item){
     provider_status:String(
       item?.fixture?.status?.short||''
     ),
+
+    elapsed:
+      Number.isFinite(Number(item?.fixture?.status?.elapsed))
+        ? Number(item.fixture.status.elapsed)
+        : null,
 
     updated_at:new Date().toISOString(),
 
