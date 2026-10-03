@@ -1,1 +1,6 @@
 .vercel
+
+# Backups locais
+*.backup.js
+*.before-*.js
+*-backup.js
