@@ -1,7 +1,7 @@
-const DATA = window.VYBET_DATA;
+﻿const DATA = window.VYBET_DATA;
 const sports = DATA.sports;
 const teams = DATA.teams;
-const matches = DATA.matches;
+let matches = DATA.matches;
 const live = DATA.live;
 
 const sportsList = document.getElementById('sports-list');
@@ -42,11 +42,11 @@ function renderMatches(list = matches) {
         <div class="team-line">${team(m.home)}<span>${m.home}</span></div>
         <div class="team-line">${team(m.away)}<span>${m.away}</span></div>
       </div>
-      <div class="trend">▥<br><span>${m.extra}</span></div>
+      <div class="trend">â–¥<br><span>${m.extra}</span></div>
       <button class="odds" data-match-id="${m.id}" data-market="Resultado Final" data-selection="${m.home}" data-odd="${m.odds.home}"><span class="odd-label">1</span>${m.odds.home}</button>
       <button class="odds" data-match-id="${m.id}" data-market="Resultado Final" data-selection="Empate" data-odd="${m.odds.draw}"><span class="odd-label">X</span>${m.odds.draw}</button>
       <button class="odds" data-match-id="${m.id}" data-market="Resultado Final" data-selection="${m.away}" data-odd="${m.odds.away}"><span class="odd-label">2</span>${m.odds.away}</button>
-      <button class="star" aria-label="Favoritar partida">☆</button>
+      <button class="star" aria-label="Favoritar partida">â˜†</button>
       <div class="total-market">
         <span class="market-name">TOTAL DE GOLS</span>
         <button class="odds total-odd" data-match-id="${m.id}" data-market="Total de Gols" data-selection="Mais de 2.5" data-odd="${m.totals.over}"><span class="odd-label">Mais de 2.5</span>${m.totals.over}</button>
@@ -62,10 +62,10 @@ function renderLive(list = live) {
     const el = document.createElement('div');
     el.className = 'live-game';
     el.innerHTML = `
-      <div class="live-meta"><span>${m.clock}</span><span>▥ ${m.extra}</span></div>
+      <div class="live-meta"><span>${m.clock}</span><span>â–¥ ${m.extra}</span></div>
       <div class="live-team"><span>${team(m.home, true)}${m.home}</span><b class="live-score">${m.scoreHome}</b></div>
       <div class="live-team"><span>${team(m.away, true)}${m.away}</span><b class="live-score">${m.scoreAway}</b></div>
-      <div class="mini-odds"><button data-live-id="${m.id}" data-selection="${m.home}" data-odd="${m.odds[0]}">${m.odds[0]}</button><button data-live-id="${m.id}" data-selection="Empate" data-odd="${m.odds[1]}">${m.odds[1]}</button><button data-live-id="${m.id}" data-selection="${m.away}" data-odd="${m.odds[2]}">${m.odds[2] || '—'}</button></div>`;
+      <div class="mini-odds"><button data-live-id="${m.id}" data-selection="${m.home}" data-odd="${m.odds[0]}">${m.odds[0]}</button><button data-live-id="${m.id}" data-selection="Empate" data-odd="${m.odds[1]}">${m.odds[1]}</button><button data-live-id="${m.id}" data-selection="${m.away}" data-odd="${m.odds[2]}">${m.odds[2] || 'â€”'}</button></div>`;
     liveBox.appendChild(el);
   });
 }
@@ -76,12 +76,12 @@ let betMode = 'single';
 function renderSlip() {
   slipBox.innerHTML = '';
   if (!slip.length) {
-    slipBox.innerHTML = `<div class="slip-empty"><b>Seu cupom está vazio</b><span>Clique em uma odd para adicionar uma seleção.</span></div>`;
+    slipBox.innerHTML = `<div class="slip-empty"><b>Seu cupom estÃ¡ vazio</b><span>Clique em uma odd para adicionar uma seleÃ§Ã£o.</span></div>`;
   } else {
     slip.forEach((b, i) => {
       const el = document.createElement('div');
       el.className = 'bet-item';
-      el.innerHTML = `<div class="bet-item-top"><b>⚽ ${b.selection}</b><span class="bet-odd">${b.odd.toFixed(2)}</span><button class="remove" data-i="${i}" aria-label="Remover">×</button></div><small>${b.market}<br>${b.event}</small>`;
+      el.innerHTML = `<div class="bet-item-top"><b>âš½ ${b.selection}</b><span class="bet-odd">${b.odd.toFixed(2)}</span><button class="remove" data-i="${i}" aria-label="Remover">Ã—</button></div><small>${b.market}<br>${b.event}</small>`;
       slipBox.appendChild(el);
     });
   }
@@ -102,7 +102,7 @@ function recalc() {
 function addSelection({matchId, selection, market='Resultado Final', event, odd}) {
   const numericOdd = Number(odd);
   if (!Number.isFinite(numericOdd) || numericOdd <= 0) {
-    showToast('Essa seleção não está disponível.');
+    showToast('Essa seleÃ§Ã£o nÃ£o estÃ¡ disponÃ­vel.');
     return;
   }
   const existing = slip.findIndex(x => x.matchId === matchId);
@@ -110,7 +110,7 @@ function addSelection({matchId, selection, market='Resultado Final', event, odd}
   if (existing >= 0) slip.splice(existing, 1, item); else slip.push(item);
   if(slip.length>1) setBetMode('multiple'); else setBetMode('single');
   renderSlip();
-  showToast(existing >= 0 ? 'Seleção atualizada no cupom.' : 'Seleção adicionada ao cupom.');
+  showToast(existing >= 0 ? 'SeleÃ§Ã£o atualizada no cupom.' : 'SeleÃ§Ã£o adicionada ao cupom.');
 }
 
 matchesBox.addEventListener('click', e => {
@@ -128,7 +128,7 @@ matchesBox.addEventListener('click', e => {
 
 liveBox.addEventListener('click', e => {
   const btn = e.target.closest('[data-live-id]');
-  if (!btn || btn.textContent.trim() === '—') return;
+  if (!btn || btn.textContent.trim() === 'â€”') return;
   const match = live.find(m => m.id === btn.dataset.liveId);
   addSelection({
     matchId: match.id,
@@ -145,7 +145,7 @@ slipBox.addEventListener('click', e => {
   slip.splice(Number(btn.dataset.i),1);
   if(slip.length<2) setBetMode('single');
   renderSlip();
-  showToast('Seleção removida.');
+  showToast('SeleÃ§Ã£o removida.');
 });
 
 document.getElementById('stake').addEventListener('input', recalc);
@@ -163,11 +163,11 @@ document.querySelectorAll('.bet-types button').forEach(btn => {
   btn.addEventListener('click', () => {
     const mode=btn.dataset.mode;
     if(mode==='single' && slip.length>1){
-      showToast('Simples aceita uma seleção. Remova seleções ou use Múltipla.');
+      showToast('Simples aceita uma seleÃ§Ã£o. Remova seleÃ§Ãµes ou use MÃºltipla.');
       return;
     }
     if(mode==='multiple' && slip.length<2){
-      showToast('Múltipla precisa de pelo menos duas seleções.');
+      showToast('MÃºltipla precisa de pelo menos duas seleÃ§Ãµes.');
       return;
     }
     setBetMode(mode);
@@ -175,11 +175,11 @@ document.querySelectorAll('.bet-types button').forEach(btn => {
 });
 
 document.getElementById('place-bet').addEventListener('click', () => {
-  if (!slip.length) return showToast('Adicione uma seleção ao cupom primeiro.');
-  showToast('Protótipo: aposta simulada com sucesso.');
+  if (!slip.length) return showToast('Adicione uma seleÃ§Ã£o ao cupom primeiro.');
+  showToast('ProtÃ³tipo: aposta simulada com sucesso.');
 });
 
-// Filtros de esporte da área de destaque.
+// Filtros de esporte da Ã¡rea de destaque.
 document.querySelectorAll('.filters button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filters button').forEach(x => x.classList.remove('on'));
@@ -190,7 +190,7 @@ document.querySelectorAll('.filters button').forEach(btn => {
   });
 });
 
-// Busca simples por time/campeonato na página.
+// Busca simples por time/campeonato na pÃ¡gina.
 searchInput?.addEventListener('input', () => {
   const q = searchInput.value.trim().toLowerCase();
   if (!q) return renderMatches(matches);
@@ -203,18 +203,18 @@ matchesBox.addEventListener('click', e => {
   const star = e.target.closest('.star');
   if (!star) return;
   star.classList.toggle('favorite');
-  star.textContent = star.classList.contains('favorite') ? '★' : '☆';
+  star.textContent = star.classList.contains('favorite') ? 'â˜…' : 'â˜†';
 });
 
 document.querySelectorAll('.topnav a, .side-link, .sport-side, .deposit, .login').forEach(el => {
   el.addEventListener('click', () => {
-    if (el.classList.contains('deposit')) showToast('Cadastro do protótipo.');
-    else if (el.classList.contains('login')) showToast('Login do protótipo.');
+    if (el.classList.contains('deposit')) showToast('Cadastro do protÃ³tipo.');
+    else if (el.classList.contains('login')) showToast('Login do protÃ³tipo.');
   });
 });
 
 document.querySelectorAll('.welcome-bonus,.side-promo,.casino-mini').forEach(card => {
-  card.addEventListener('click', () => showToast('Área promocional do protótipo.'));
+  card.addEventListener('click', () => showToast('Ãrea promocional do protÃ³tipo.'));
 });
 
 function showToast(msg){
@@ -230,7 +230,7 @@ renderLive();
 renderSlip();
 
 
-// ===== Contas e páginas do frontend (protótipo) =====
+// ===== Contas e pÃ¡ginas do frontend (protÃ³tipo) =====
 const pageOverlay = document.getElementById('page-overlay');
 const pageContent = document.getElementById('page-content');
 const pageClose = document.getElementById('page-close');
@@ -259,10 +259,96 @@ async function apiRequest(path, options={}){
   const headers = {'Content-Type':'application/json', ...(options.headers||{})};
   if(accessToken()) headers.Authorization = `Bearer ${accessToken()}`;
   const response = await fetch(`${API_BASE}${path}`, {...options, headers});
-  let data={}; try { data=await response.json(); } catch { data={ok:false,error:'Resposta inválida do servidor.'}; }
+  let data={}; try { data=await response.json(); } catch { data={ok:false,error:'Resposta invÃ¡lida do servidor.'}; }
   if(!response.ok || data.ok===false) throw new Error(data.error || `Erro ${response.status}`);
   return data;
 }
+
+function providerMatchToFrontend(m){
+  const start = new Date(m.start_time);
+
+  return {
+    id: m.match_key,
+    sport: 'football',
+
+    league: m.league_name || 'Futebol',
+    country: m.league_country || '',
+
+    home: m.home_team,
+    away: m.away_team,
+
+    day: start.toLocaleDateString('pt-BR',{
+      day:'2-digit',
+      month:'2-digit'
+    }),
+
+    time: start.toLocaleTimeString('pt-BR',{
+      hour:'2-digit',
+      minute:'2-digit'
+    }),
+
+    extra: m.odds?.bookmaker || 'Bet365',
+
+    odds: {
+      home: m.odds?.home ?? null,
+      draw: m.odds?.draw ?? null,
+      away: m.odds?.away ?? null
+    },
+
+    totals: {
+      over: m.odds?.over_2_5 ?? null,
+      under: m.odds?.under_2_5 ?? null
+    },
+
+    providerFixtureId: m.provider_fixture_id,
+    providerStatus: m.provider_status,
+    startTime: m.start_time
+  };
+}
+async function loadProviderMatches(){
+  try{
+    const data=await apiRequest(
+      '/api/football/provider-fixtures?status=scheduled'
+    );
+
+    const now = Date.now();
+
+    const providerMatches=(data.matches||[])
+      .filter(m =>
+        new Date(m.start_time).getTime() > now &&
+        m.status === 'scheduled' &&
+        m.provider_status === 'NS' &&
+        m.odds &&
+        m.odds.home != null &&
+        m.odds.draw != null &&
+        m.odds.away != null &&
+        m.odds.over_2_5 != null &&
+        m.odds.under_2_5 != null
+      )
+      .map(providerMatchToFrontend);
+
+    if(!providerMatches.length){
+      console.warn('VYBET: nenhuma partida com odds encontrada.');
+      return;
+    }
+
+    matches=providerMatches;
+    renderMatches(matches);
+
+    console.log(
+      'VYBET: partidas reais carregadas:',
+      matches
+    );
+
+  }catch(error){
+    console.error(
+      'VYBET: erro ao carregar partidas reais:',
+      error
+    );
+  }
+}
+
+loadProviderMatches();
 function updateAuthHeader(){
   const top=document.querySelector('.top-actions'); if(!top)return;
   top.querySelectorAll('.auth-runtime').forEach(x=>x.remove());
@@ -279,23 +365,23 @@ function updateAuthHeader(){
 }
 async function logoutUser(){
   try { if(accessToken()) await apiRequest('/api/auth/logout',{method:'POST',body:'{}'}); } catch {}
-  saveSession(null); authProfile=null; showToast('Sessão encerrada.'); closePage();
+  saveSession(null); authProfile=null; showToast('SessÃ£o encerrada.'); closePage();
 }
 async function loadProfilePage(){
   if(!currentUser()){ openPage('login'); return; }
   pageContent.innerHTML='<div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>Carregando seus dados...</p></div>';
   try{
     const data=await apiRequest('/api/profile'); authProfile=data.profile;
-    const name=data.profile?.name || currentUser()?.user_metadata?.name || 'Usuário VYBET';
+    const name=data.profile?.name || currentUser()?.user_metadata?.name || 'UsuÃ¡rio VYBET';
     const email=data.email || currentUser()?.email || '';
     const balance=Number(data.profile?.demo_balance || 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
     const vip=(data.profile?.vip_level || 'bronze');
     pageContent.innerHTML=`<div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>Dados reais da sua conta VYBET.</p></div>
-      <div class="profile-grid"><div class="profile-card profile-main"><div class="avatar">${escapeHtml(name.charAt(0).toUpperCase())}</div><div><b>${escapeHtml(name)}</b><span>${escapeHtml(email)}</span></div><button class="outline" id="profile-logout">Sair</button></div><div class="profile-card"><small>Saldo de demonstração</small><strong>${balance}</strong><span>Somente para testes do protótipo.</span></div><div class="profile-card"><small>Nível</small><strong>VIP ${escapeHtml(vip.charAt(0).toUpperCase()+vip.slice(1))}</strong><span>Conta autenticada no Supabase</span></div></div>
-      <div class="settings-list"><button><span>🔒 Segurança</span><b>›</b></button><button><span>🔔 Notificações</span><b>›</b></button><button><span>🎯 Limites e preferências</span><b>›</b></button></div>`;
+      <div class="profile-grid"><div class="profile-card profile-main"><div class="avatar">${escapeHtml(name.charAt(0).toUpperCase())}</div><div><b>${escapeHtml(name)}</b><span>${escapeHtml(email)}</span></div><button class="outline" id="profile-logout">Sair</button></div><div class="profile-card"><small>Saldo de demonstraÃ§Ã£o</small><strong>${balance}</strong><span>Somente para testes do protÃ³tipo.</span></div><div class="profile-card"><small>NÃ­vel</small><strong>VIP ${escapeHtml(vip.charAt(0).toUpperCase()+vip.slice(1))}</strong><span>Conta autenticada no Supabase</span></div></div>
+      <div class="settings-list"><button><span>ðŸ”’ SeguranÃ§a</span><b>â€º</b></button><button><span>ðŸ”” NotificaÃ§Ãµes</span><b>â€º</b></button><button><span>ðŸŽ¯ Limites e preferÃªncias</span><b>â€º</b></button></div>`;
     pageContent.querySelector('#profile-logout')?.addEventListener('click',logoutUser);
   }catch(err){
-    if(/Sessão inválida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); return; }
+    if(/SessÃ£o invÃ¡lida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); return; }
     pageContent.innerHTML=`<div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>${escapeHtml(err.message)}</p></div>`;
   }
 }
@@ -307,74 +393,74 @@ async function handleAccountForm(form){
       const inputs=form.querySelectorAll('input');
       const payload={name:inputs[0].value.trim(),birth_date:inputs[1].value,email:inputs[2].value.trim(),password:inputs[3].value};
       const data=await apiRequest('/api/auth/signup',{method:'POST',body:JSON.stringify(payload)});
-      if(data.session){ saveSession(data.session,data.user); showToast('Conta criada e sessão iniciada.'); closePage(); }
+      if(data.session){ saveSession(data.session,data.user); showToast('Conta criada e sessÃ£o iniciada.'); closePage(); }
       else { showToast('Conta criada. Verifique seu e-mail para entrar.'); openPage('login'); }
     } else if(form.dataset.form==='login'){
       const inputs=form.querySelectorAll('input');
       const data=await apiRequest('/api/auth/login',{method:'POST',body:JSON.stringify({email:inputs[0].value.trim(),password:inputs[1].value})});
       saveSession(data.session,data.user); showToast('Login realizado com sucesso.'); closePage();
     } else if(form.dataset.form==='recovery'){
-      showToast('Recuperação de senha ainda não conectada ao backend.');
+      showToast('RecuperaÃ§Ã£o de senha ainda nÃ£o conectada ao backend.');
     }
-  }catch(err){ showToast(err.message || 'Não foi possível concluir a operação.'); }
+  }catch(err){ showToast(err.message || 'NÃ£o foi possÃ­vel concluir a operaÃ§Ã£o.'); }
   finally{ if(submit){submit.disabled=false;submit.textContent=original;} }
 }
 
 function openPage(page){
   const pages = {
     login: `
-      <div class="account-head"><span>VYBET</span><h1>Entrar na sua conta</h1><p>Acesse seu painel para acompanhar apostas e preferências.</p></div>
+      <div class="account-head"><span>VYBET</span><h1>Entrar na sua conta</h1><p>Acesse seu painel para acompanhar apostas e preferÃªncias.</p></div>
       <form class="account-form" data-form="login">
         <label>E-mail<input type="email" required placeholder="voce@email.com"></label>
-        <label>Senha<input type="password" required placeholder="••••••••"></label>
+        <label>Senha<input type="password" required placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"></label>
         <div class="form-row"><label class="check"><input type="checkbox"> Lembrar de mim</label><a href="#" data-page="recovery">Esqueci minha senha</a></div>
         <button class="primary-action" type="submit">Entrar</button>
-        <p class="account-foot">Ainda não tem conta? <a href="#" data-page="signup">Criar conta</a></p>
+        <p class="account-foot">Ainda nÃ£o tem conta? <a href="#" data-page="signup">Criar conta</a></p>
       </form>`,
     signup: `
-      <div class="account-head"><span>VYBET</span><h1>Criar sua conta</h1><p>Monte seu perfil para continuar no protótipo.</p></div>
+      <div class="account-head"><span>VYBET</span><h1>Criar sua conta</h1><p>Monte seu perfil para continuar no protÃ³tipo.</p></div>
       <form class="account-form" data-form="signup">
         <div class="form-grid"><label>Nome<input required placeholder="Seu nome"></label><label>Data de nascimento<input type="date" required></label></div>
         <label>E-mail<input type="email" required placeholder="voce@email.com"></label>
-        <label>Senha<input type="password" minlength="6" required placeholder="Mínimo de 6 caracteres"></label>
-        <label class="check"><input type="checkbox" required> Li e aceito os termos do protótipo.</label>
+        <label>Senha<input type="password" minlength="6" required placeholder="MÃ­nimo de 6 caracteres"></label>
+        <label class="check"><input type="checkbox" required> Li e aceito os termos do protÃ³tipo.</label>
         <button class="primary-action" type="submit">Criar conta</button>
-        <p class="account-foot">Já possui conta? <a href="#" data-page="login">Entrar</a></p>
+        <p class="account-foot">JÃ¡ possui conta? <a href="#" data-page="login">Entrar</a></p>
       </form>`,
     recovery: `
-      <div class="account-head"><span>RECUPERAÇÃO</span><h1>Recuperar acesso</h1><p>Informe seu e-mail para simular o envio de recuperação.</p></div>
+      <div class="account-head"><span>RECUPERAÃ‡ÃƒO</span><h1>Recuperar acesso</h1><p>Informe seu e-mail para simular o envio de recuperaÃ§Ã£o.</p></div>
       <form class="account-form" data-form="recovery"><label>E-mail<input type="email" required placeholder="voce@email.com"></label><button class="primary-action" type="submit">Enviar link</button></form>`,
     profile: `
       <div class="account-head"><span>MINHA CONTA</span><h1>Perfil</h1><p>Carregando seus dados...</p></div>`,
     bets: `
-      <div class="account-head"><span>HISTÓRICO</span><h1>Minhas apostas</h1><p>Acompanhe as apostas simuladas deste protótipo.</p></div>
+      <div class="account-head"><span>HISTÃ“RICO</span><h1>Minhas apostas</h1><p>Acompanhe as apostas simuladas deste protÃ³tipo.</p></div>
       <div class="bet-history-tabs"><button class="active">Todas</button><button>Abertas</button><button>Encerradas</button></div>
       <div class="history-list"><div class="empty-state">Carregando suas apostas...</div></div>
       <div class="history-summary"><span>Total de apostas <b>0</b></span><span>Valor apostado <b>R$ 0,00</b></span><span>Retorno potencial <b>R$ 0,00</b></span></div>`,
     results: `
-      <div class="account-head"><span>PLACARES</span><h1>Resultados</h1><p>Resultados de demonstração organizados por competição.</p></div>
+      <div class="account-head"><span>PLACARES</span><h1>Resultados</h1><p>Resultados de demonstraÃ§Ã£o organizados por competiÃ§Ã£o.</p></div>
       <div class="feature-tabs"><button class="active">Hoje</button><button>Ontem</button><button>Esta semana</button></div>
       <div class="feature-list">
-        <div class="result-card"><small>Premier League · Encerrado</small><div><b>Manchester City</b><strong>2</strong></div><div><b>Arsenal</b><strong>1</strong></div></div>
-        <div class="result-card"><small>La Liga · Encerrado</small><div><b>Real Madrid</b><strong>3</strong></div><div><b>Barcelona</b><strong>2</strong></div></div>
-        <div class="result-card"><small>Série A · Encerrado</small><div><b>Flamengo</b><strong>1</strong></div><div><b>Palmeiras</b><strong>1</strong></div></div>
+        <div class="result-card"><small>Premier League Â· Encerrado</small><div><b>Manchester City</b><strong>2</strong></div><div><b>Arsenal</b><strong>1</strong></div></div>
+        <div class="result-card"><small>La Liga Â· Encerrado</small><div><b>Real Madrid</b><strong>3</strong></div><div><b>Barcelona</b><strong>2</strong></div></div>
+        <div class="result-card"><small>SÃ©rie A Â· Encerrado</small><div><b>Flamengo</b><strong>1</strong></div><div><b>Palmeiras</b><strong>1</strong></div></div>
       </div>`,
     promotions: `
-      <div class="account-head"><span>OFERTAS</span><h1>Promoções</h1><p>Área visual de promoções do protótipo VYBET.</p></div>
+      <div class="account-head"><span>OFERTAS</span><h1>PromoÃ§Ãµes</h1><p>Ãrea visual de promoÃ§Ãµes do protÃ³tipo VYBET.</p></div>
       <div class="promo-grid">
-        <article><span>BOAS-VINDAS</span><h2>Bônus 100%</h2><p>Card demonstrativo para a primeira experiência no site.</p><button class="primary-action">Ver detalhes</button></article>
-        <article><span>SEMANAL</span><h2>Cashback</h2><p>Área demonstrativa para campanhas e benefícios semanais.</p><button class="primary-action">Ver detalhes</button></article>
-        <article><span>VIP</span><h2>Benefícios VIP</h2><p>Campanhas exclusivas apresentadas conforme o nível da conta.</p><button class="primary-action" data-page="vip">Conhecer VIP</button></article>
+        <article><span>BOAS-VINDAS</span><h2>BÃ´nus 100%</h2><p>Card demonstrativo para a primeira experiÃªncia no site.</p><button class="primary-action">Ver detalhes</button></article>
+        <article><span>SEMANAL</span><h2>Cashback</h2><p>Ãrea demonstrativa para campanhas e benefÃ­cios semanais.</p><button class="primary-action">Ver detalhes</button></article>
+        <article><span>VIP</span><h2>BenefÃ­cios VIP</h2><p>Campanhas exclusivas apresentadas conforme o nÃ­vel da conta.</p><button class="primary-action" data-page="vip">Conhecer VIP</button></article>
       </div>`,
     vip: `
-      <div class="account-head"><span>VYBET VIP</span><h1>Clube VIP</h1><p>Progressão visual e benefícios de demonstração do programa VIP.</p></div>
-      <div class="vip-hero"><img src="assets/icons/crown.svg" alt=""><div><small>NÍVEL ATUAL</small><h2>VIP Bronze</h2><p>0 / 1.000 pontos para o próximo nível</p><div class="vip-progress"><i></i></div></div></div>
-      <div class="vip-levels"><div><b>Bronze</b><span>Nível inicial</span></div><div><b>Prata</b><span>1.000 pts</span></div><div><b>Ouro</b><span>5.000 pts</span></div><div><b>Diamante</b><span>15.000 pts</span></div></div>
-      <div class="vip-benefits"><div><b>🎁 Campanhas</b><span>Benefícios demonstrativos por nível</span></div><div><b>⚡ Prioridade</b><span>Experiência diferenciada no protótipo</span></div><div><b>👑 Status</b><span>Progressão visual da conta</span></div></div>`,
+      <div class="account-head"><span>VYBET VIP</span><h1>Clube VIP</h1><p>ProgressÃ£o visual e benefÃ­cios de demonstraÃ§Ã£o do programa VIP.</p></div>
+      <div class="vip-hero"><img src="assets/icons/crown.svg" alt=""><div><small>NÃVEL ATUAL</small><h2>VIP Bronze</h2><p>0 / 1.000 pontos para o prÃ³ximo nÃ­vel</p><div class="vip-progress"><i></i></div></div></div>
+      <div class="vip-levels"><div><b>Bronze</b><span>NÃ­vel inicial</span></div><div><b>Prata</b><span>1.000 pts</span></div><div><b>Ouro</b><span>5.000 pts</span></div><div><b>Diamante</b><span>15.000 pts</span></div></div>
+      <div class="vip-benefits"><div><b>ðŸŽ Campanhas</b><span>BenefÃ­cios demonstrativos por nÃ­vel</span></div><div><b>âš¡ Prioridade</b><span>ExperiÃªncia diferenciada no protÃ³tipo</span></div><div><b>ðŸ‘‘ Status</b><span>ProgressÃ£o visual da conta</span></div></div>`,
     sport: `
-      <div class="account-head"><span>ESPORTES</span><h1 id="sport-page-title">Futebol</h1><p>Competições, partidas e mercados disponíveis no protótipo.</p></div>
-      <div class="league-grid"><button>Premier League <span>›</span></button><button>La Liga <span>›</span></button><button>Brasileirão <span>›</span></button><button>Champions League <span>›</span></button><button>Libertadores <span>›</span></button><button>Ver todas <span>›</span></button></div>
-      <div class="sport-page-games"><h3>Próximas partidas</h3>${matches.slice(0,4).map(m=>`<div><span><small>${m.league}</small><b>${m.home} × ${m.away}</b></span><strong>${m.time}</strong></div>`).join('')}</div>`,
+      <div class="account-head"><span>ESPORTES</span><h1 id="sport-page-title">Futebol</h1><p>CompetiÃ§Ãµes, partidas e mercados disponÃ­veis no protÃ³tipo.</p></div>
+      <div class="league-grid"><button>Premier League <span>â€º</span></button><button>La Liga <span>â€º</span></button><button>BrasileirÃ£o <span>â€º</span></button><button>Champions League <span>â€º</span></button><button>Libertadores <span>â€º</span></button><button>Ver todas <span>â€º</span></button></div>
+      <div class="sport-page-games"><h3>PrÃ³ximas partidas</h3>${matches.slice(0,4).map(m=>`<div><span><small>${m.league}</small><b>${m.home} Ã— ${m.away}</b></span><strong>${m.time}</strong></div>`).join('')}</div>`,
   };
   pageContent.innerHTML = pages[page] || pages.profile;
   pageOverlay.classList.add('open');
@@ -392,7 +478,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&pageOverlay?.classL
 document.querySelectorAll('[data-page]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();openPage(el.dataset.page)}));
 
 
-// ===== Navegação de esportes e páginas complementares =====
+// ===== NavegaÃ§Ã£o de esportes e pÃ¡ginas complementares =====
 document.querySelectorAll('.sport-side').forEach(el=>el.addEventListener('click',e=>{
   e.preventDefault(); openPage('sport');
   const title=pageContent.querySelector('#sport-page-title');
@@ -404,42 +490,42 @@ document.querySelectorAll('.sport-tabs button').forEach(el=>el.addEventListener(
 document.querySelector('.results-placeholder .outline')?.addEventListener('click',()=>openPage('results'));
 document.querySelector('.vip-badge')?.addEventListener('click',()=>openPage('vip'));
 
-// ===== VYBET frontend funcional v2: páginas, filtros e persistência local =====
+// ===== VYBET frontend funcional v2: pÃ¡ginas, filtros e persistÃªncia local =====
 const DEMO_RESULTS = [
   {group:'Hoje', league:'Premier League', home:'Chelsea', away:'Tottenham', hs:2, as:1},
-  {group:'Hoje', league:'La Liga', home:'Atlético de Madrid', away:'Sevilla', hs:1, as:1},
-  {group:'Ontem', league:'Série A', home:'Flamengo', away:'Palmeiras', hs:2, as:0},
+  {group:'Hoje', league:'La Liga', home:'AtlÃ©tico de Madrid', away:'Sevilla', hs:1, as:1},
+  {group:'Ontem', league:'SÃ©rie A', home:'Flamengo', away:'Palmeiras', hs:2, as:0},
   {group:'Ontem', league:'Copa Libertadores', home:'River Plate', away:'Boca Juniors', hs:1, as:0},
   {group:'Esta semana', league:'Premier League', home:'Liverpool', away:'Newcastle', hs:3, as:1},
   {group:'Esta semana', league:'La Liga', home:'Real Madrid', away:'Barcelona', hs:2, as:2}
 ];
 const CASINO_GAMES = [
-  {name:'Neon Fortune', cat:'Slots', icon:'💎'}, {name:'Temple Gold', cat:'Slots', icon:'🏛️'},
-  {name:'Wild Tiger', cat:'Slots', icon:'🐯'}, {name:'Candy Spin', cat:'Slots', icon:'🍭'},
-  {name:'Roleta Neon', cat:'Mesa', icon:'🎯'}, {name:'Blackjack 21', cat:'Mesa', icon:'🂡'},
-  {name:'Baccarat Club', cat:'Mesa', icon:'🃏'}, {name:'Lightning Roulette', cat:'Ao Vivo', icon:'⚡'},
-  {name:'Live Blackjack', cat:'Ao Vivo', icon:'🎥'}, {name:'Dragon Table', cat:'Ao Vivo', icon:'🐉'}
+  {name:'Neon Fortune', cat:'Slots', icon:'ðŸ’Ž'}, {name:'Temple Gold', cat:'Slots', icon:'ðŸ›ï¸'},
+  {name:'Wild Tiger', cat:'Slots', icon:'ðŸ¯'}, {name:'Candy Spin', cat:'Slots', icon:'ðŸ­'},
+  {name:'Roleta Neon', cat:'Mesa', icon:'ðŸŽ¯'}, {name:'Blackjack 21', cat:'Mesa', icon:'ðŸ‚¡'},
+  {name:'Baccarat Club', cat:'Mesa', icon:'ðŸƒ'}, {name:'Lightning Roulette', cat:'Ao Vivo', icon:'âš¡'},
+  {name:'Live Blackjack', cat:'Ao Vivo', icon:'ðŸŽ¥'}, {name:'Dragon Table', cat:'Ao Vivo', icon:'ðŸ‰'}
 ];
 const favCasino = new Set(JSON.parse(localStorage.getItem('vybet_casino_favs') || '[]'));
 
 function resultCards(group='Hoje'){
-  return DEMO_RESULTS.filter(r=>group==='Todos'||r.group===group).map(r=>`<article class="result-card"><small>${r.league} · ${r.group}</small><div><b>${r.home}</b><strong>${r.hs}</strong></div><div><b>${r.away}</b><strong>${r.as}</strong></div></article>`).join('') || '<div class="empty-state">Nenhum resultado nesse período.</div>';
+  return DEMO_RESULTS.filter(r=>group==='Todos'||r.group===group).map(r=>`<article class="result-card"><small>${r.league} Â· ${r.group}</small><div><b>${r.home}</b><strong>${r.hs}</strong></div><div><b>${r.away}</b><strong>${r.as}</strong></div></article>`).join('') || '<div class="empty-state">Nenhum resultado nesse perÃ­odo.</div>';
 }
 function casinoCards(cat='Todos', query=''){
-  return CASINO_GAMES.filter(g=>(cat==='Todos'||g.cat===cat)&&g.name.toLowerCase().includes(query.toLowerCase())).map((g,i)=>`<article class="casino-game" data-game="${g.name}"><button class="casino-fav ${favCasino.has(g.name)?'on':''}" data-fav="${g.name}">${favCasino.has(g.name)?'★':'☆'}</button><div class="casino-art">${g.icon}</div><small>${g.cat}</small><b>${g.name}</b><button class="play-demo" data-game="${g.name}">Jogar demonstração</button></article>`).join('') || '<div class="empty-state">Nenhum jogo encontrado.</div>';
+  return CASINO_GAMES.filter(g=>(cat==='Todos'||g.cat===cat)&&g.name.toLowerCase().includes(query.toLowerCase())).map((g,i)=>`<article class="casino-game" data-game="${g.name}"><button class="casino-fav ${favCasino.has(g.name)?'on':''}" data-fav="${g.name}">${favCasino.has(g.name)?'â˜…':'â˜†'}</button><div class="casino-art">${g.icon}</div><small>${g.cat}</small><b>${g.name}</b><button class="play-demo" data-game="${g.name}">Jogar demonstraÃ§Ã£o</button></article>`).join('') || '<div class="empty-state">Nenhum jogo encontrado.</div>';
 }
 function casinoPage(liveOnly=false){
   const defaultCat=liveOnly?'Ao Vivo':'Todos';
-  return `<div class="account-head"><span>CASSINO</span><h1>${liveOnly?'Cassino Ao Vivo':'Cassino VYBET'}</h1><p>Lobby demonstrativo. Os jogos abaixo são fictícios e servem para testar a navegação do frontend.</p></div>
+  return `<div class="account-head"><span>CASSINO</span><h1>${liveOnly?'Cassino Ao Vivo':'Cassino VYBET'}</h1><p>Lobby demonstrativo. Os jogos abaixo sÃ£o fictÃ­cios e servem para testar a navegaÃ§Ã£o do frontend.</p></div>
   <div class="casino-tools"><input id="casino-search" placeholder="Buscar jogo..."><div class="casino-cats">${['Todos','Slots','Mesa','Ao Vivo','Favoritos'].map(c=>`<button class="${c===defaultCat?'active':''}" data-cat="${c}">${c}</button>`).join('')}</div></div>
   <div class="casino-grid" id="casino-grid">${casinoCards(defaultCat)}</div>`;
 }
 function liveAllPage(){
-  return `<div class="account-head"><span>AO VIVO</span><h1>Futebol ao vivo</h1><p>Partidas ao vivo do protótipo. As cotações e placares são demonstrativos.</p></div><div class="live-page-list">${live.map(m=>`<article><div><small>${m.clock} · Ao vivo</small><b>${team(m.home,true)} ${m.home} <strong>${m.scoreHome}</strong></b><b>${team(m.away,true)} ${m.away} <strong>${m.scoreAway}</strong></b></div><button data-live-open="${m.id}">Ver mercados</button></article>`).join('')}</div>`;
+  return `<div class="account-head"><span>AO VIVO</span><h1>Futebol ao vivo</h1><p>Partidas ao vivo do protÃ³tipo. As cotaÃ§Ãµes e placares sÃ£o demonstrativos.</p></div><div class="live-page-list">${live.map(m=>`<article><div><small>${m.clock} Â· Ao vivo</small><b>${team(m.home,true)} ${m.home} <strong>${m.scoreHome}</strong></b><b>${team(m.away,true)} ${m.away} <strong>${m.scoreAway}</strong></b></div><button data-live-open="${m.id}">Ver mercados</button></article>`).join('')}</div>`;
 }
 function leaguePage(league){
   const rows=matches.filter(m=>m.league===league || (league==='Libertadores'&&m.league.includes('Libertadores')));
-  return `<div class="account-head"><span>CAMPEONATO</span><h1>${league}</h1><p>Partidas disponíveis no protótipo.</p></div><div class="sport-page-games">${rows.length?rows.map(m=>`<div><span><small>${m.day}</small><b>${m.home} × ${m.away}</b></span><strong>${m.time}</strong></div>`).join(''):'<div class="empty-state">Ainda não há partidas cadastradas para esta competição.</div>'}</div>`;
+  return `<div class="account-head"><span>CAMPEONATO</span><h1>${league}</h1><p>Partidas disponÃ­veis no protÃ³tipo.</p></div><div class="sport-page-games">${rows.length?rows.map(m=>`<div><span><small>${m.day}</small><b>${m.home} Ã— ${m.away}</b></span><strong>${m.time}</strong></div>`).join(''):'<div class="empty-state">Ainda nÃ£o hÃ¡ partidas cadastradas para esta competiÃ§Ã£o.</div>'}</div>`;
 }
 
 const oldOpenPage = openPage;
@@ -465,9 +551,9 @@ function bindDynamicPage(){
     bindDynamicPage();
   });
   const search=pageContent.querySelector('#casino-search'); if(search) search.oninput=()=>{const cat=pageContent.querySelector('[data-cat].active')?.dataset.cat||'Todos'; document.getElementById('casino-grid').innerHTML=casinoCards(cat==='Favoritos'?'Todos':cat,search.value); if(cat==='Favoritos') [...document.querySelectorAll('#casino-grid .casino-game')].forEach(card=>{if(!favCasino.has(card.dataset.game))card.remove()}); bindDynamicPage();};
-  pageContent.querySelectorAll('[data-fav]').forEach(btn=>btn.onclick=e=>{e.stopPropagation(); const n=btn.dataset.fav; favCasino.has(n)?favCasino.delete(n):favCasino.add(n); localStorage.setItem('vybet_casino_favs',JSON.stringify([...favCasino])); btn.classList.toggle('on');btn.textContent=favCasino.has(n)?'★':'☆';});
-  pageContent.querySelectorAll('.play-demo').forEach(btn=>btn.onclick=()=>showToast(`${btn.dataset.game}: modo demonstração aberto.`));
-  pageContent.querySelectorAll('[data-live-open]').forEach(btn=>btn.onclick=()=>showToast('Mercados ao vivo disponíveis no cupom da página inicial.'));
+  pageContent.querySelectorAll('[data-fav]').forEach(btn=>btn.onclick=e=>{e.stopPropagation(); const n=btn.dataset.fav; favCasino.has(n)?favCasino.delete(n):favCasino.add(n); localStorage.setItem('vybet_casino_favs',JSON.stringify([...favCasino])); btn.classList.toggle('on');btn.textContent=favCasino.has(n)?'â˜…':'â˜†';});
+  pageContent.querySelectorAll('.play-demo').forEach(btn=>btn.onclick=()=>showToast(`${btn.dataset.game}: modo demonstraÃ§Ã£o aberto.`));
+  pageContent.querySelectorAll('[data-live-open]').forEach(btn=>btn.onclick=()=>showToast('Mercados ao vivo disponÃ­veis no cupom da pÃ¡gina inicial.'));
 }
 function enhanceResults(){
   const list=pageContent.querySelector('.feature-list'); if(!list)return;
@@ -485,7 +571,7 @@ async function enhanceBetHistory(){
     const data=await apiRequest('/api/bets');
     const bets=Array.isArray(data.bets)?data.bets:[];
     if(!bets.length){
-      list.innerHTML='<div class="empty-state">Você ainda não fez nenhuma aposta de demonstração.</div>';
+      list.innerHTML='<div class="empty-state">VocÃª ainda nÃ£o fez nenhuma aposta de demonstraÃ§Ã£o.</div>';
     }else{
       list.innerHTML=bets.map(b=>{
         const sels=(b.demo_bet_selections||[]);
@@ -493,7 +579,7 @@ async function enhanceBetHistory(){
         const market=sels.map(s=>s.market).join(' + ');
         const status=b.status==='open'?'Aberta':(b.status==='won'?'Ganha':(b.status==='lost'?'Perdida':'Encerrada'));
         const date=new Date(b.created_at).toLocaleString('pt-BR');
-        return `<div class="history-item"><div><small>${escapeHtml(date)}</small><b>${escapeHtml(selection)}</b><span>${escapeHtml(market)}</span><span>Valor: ${Number(b.stake).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} · Retorno potencial: ${Number(b.potential_return).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span></div><div class="history-meta"><strong>${Number(b.total_odd).toFixed(2)}</strong><em class="${b.status==='open'?'open':''}">${escapeHtml(status)}</em></div></div>`;
+        return `<div class="history-item"><div><small>${escapeHtml(date)}</small><b>${escapeHtml(selection)}</b><span>${escapeHtml(market)}</span><span>Valor: ${Number(b.stake).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})} Â· Retorno potencial: ${Number(b.potential_return).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span></div><div class="history-meta"><strong>${Number(b.total_odd).toFixed(2)}</strong><em class="${b.status==='open'?'open':''}">${escapeHtml(status)}</em></div></div>`;
       }).join('');
     }
     const summary=pageContent.querySelector('.history-summary');
@@ -503,20 +589,20 @@ async function enhanceBetHistory(){
       summary.innerHTML=`<span>Total de apostas <b>${bets.length}</b></span><span>Valor apostado <b>${totalStake.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</b></span><span>Retorno potencial <b>${totalPotential.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</b></span>`;
     }
   }catch(err){
-    if(/Sessão inválida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); return; }
-    list.innerHTML=`<div class="empty-state">${escapeHtml(err.message||'Não foi possível carregar suas apostas.')}</div>`;
+    if(/SessÃ£o invÃ¡lida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); return; }
+    list.innerHTML=`<div class="empty-state">${escapeHtml(err.message||'NÃ£o foi possÃ­vel carregar suas apostas.')}</div>`;
   }
 }
 
-// Persistir apostas de demonstração no Supabase, vinculadas ao usuário autenticado.
+// Persistir apostas de demonstraÃ§Ã£o no Supabase, vinculadas ao usuÃ¡rio autenticado.
 const placeBetBtn=document.getElementById('place-bet');
 placeBetBtn.onclick=async()=>{
-  if(!currentUser()){ showToast('Entre na sua conta para fazer uma aposta de demonstração.'); openPage('login'); return; }
-  if(!slip.length)return showToast('Adicione uma seleção ao cupom primeiro.');
-  if(betMode==='single' && slip.length!==1)return showToast('Aposta simples aceita somente uma seleção.');
-  if(betMode==='multiple' && slip.length<2)return showToast('Aposta múltipla precisa de pelo menos duas seleções.');
+  if(!currentUser()){ showToast('Entre na sua conta para fazer uma aposta de demonstraÃ§Ã£o.'); openPage('login'); return; }
+  if(!slip.length)return showToast('Adicione uma seleÃ§Ã£o ao cupom primeiro.');
+  if(betMode==='single' && slip.length!==1)return showToast('Aposta simples aceita somente uma seleÃ§Ã£o.');
+  if(betMode==='multiple' && slip.length<2)return showToast('Aposta mÃºltipla precisa de pelo menos duas seleÃ§Ãµes.');
   const stake=Number(document.getElementById('stake').value)||0;
-  if(stake<=0)return showToast('Informe um valor de demonstração maior que zero.');
+  if(stake<=0)return showToast('Informe um valor de demonstraÃ§Ã£o maior que zero.');
   placeBetBtn.disabled=true;
   const original=placeBetBtn.textContent;
   placeBetBtn.textContent='Salvando...';
@@ -539,21 +625,25 @@ placeBetBtn.onclick=async()=>{
       : '';
     showToast(balanceText
       ? `Aposta salva. Saldo demo: ${balanceText}`
-      : 'Aposta de demonstração salva na sua conta.');
+      : 'Aposta de demonstraÃ§Ã£o salva na sua conta.');
   }catch(err){
-    if(/Sessão inválida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); }
-    showToast(err.message || 'Não foi possível salvar a aposta.');
+    if(/SessÃ£o invÃ¡lida|Token ausente/i.test(err.message)){ saveSession(null); openPage('login'); }
+    showToast(err.message || 'NÃ£o foi possÃ­vel salvar a aposta.');
   }finally{
     placeBetBtn.disabled=false;
     placeBetBtn.textContent=original;
   }
 };
 
-// Competições clicáveis e links completos.
+// CompetiÃ§Ãµes clicÃ¡veis e links completos.
 document.querySelectorAll('.competition[data-league]').forEach(card=>card.addEventListener('click',()=>{pageContent.innerHTML=leaguePage(card.dataset.league);pageOverlay.classList.add('open');pageOverlay.setAttribute('aria-hidden','false');document.body.classList.add('modal-open');}));
 document.querySelectorAll('[data-page="live-all"],[data-page="casino"],[data-page="casino-live"]').forEach(el=>el.onclick=e=>{e.preventDefault();openPage(el.dataset.page)});
 
-// Autenticação real integrada ao backend VYBET/Supabase.
+// AutenticaÃ§Ã£o real integrada ao backend VYBET/Supabase.
 
-// Inicializa o estado visual da autenticação ao carregar a página.
+// Inicializa o estado visual da autenticaÃ§Ã£o ao carregar a pÃ¡gina.
 updateAuthHeader();
+
+
+
+

@@ -3,3 +3,10 @@ node_modules
 .env.local
 .env.*.local
 *-test.json
+
+.env*
+
+# Backups locais
+*.backup.js
+*.before-*.js
+sync.backup.js

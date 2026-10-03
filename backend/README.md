@@ -22,3 +22,12 @@ Nunca coloque `SUPABASE_SERVICE_ROLE_KEY` no frontend. Ela pertence apenas ao se
 
 ## Próxima integração
 No frontend, substituir `localStorage` de login/perfil/apostas pelos endpoints acima e trocar `js/data.js` por `/api/football/matches` progressivamente.
+
+## Motor automático de resultados demo
+
+1. Rode `supabase/automatic-results-migration.sql` no Supabase.
+2. O endpoint `/api/cron/settle-results` procura resultados com `status=finished` em `demo_match_results` e fecha automaticamente seleções e apostas.
+3. O `vercel.json` agenda essa verificação a cada 10 minutos.
+4. Para resultados esportivos reais, conecte um provedor no backend e faça upsert em `demo_match_results`. Não coloque a chave do provedor no frontend.
+
+Observação: as partidas atuais do frontend são fictícias. Portanto, elas não podem ser vinculadas com segurança a placares reais até que o catálogo de partidas venha de um provedor esportivo.
